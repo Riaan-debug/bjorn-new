@@ -1,0 +1,115 @@
+pages 10
+--- page 1 ---
+Brand
+Guidelines
+VERSION 1 - 20 FEBRUARY 2026
+Apostello Coffee Co.
+BY LUHANDRE DE BEER
+--- page 2 ---
+Our brand guidelines
+Our brand guidelines set the tone for our Café’s unique visual identity, reflecting the vibrant
+spirit and commitment to excellence that define us. These guidelines are integral to every piece
+of communication, whether in print or digital form. They outline the precise use of our distinctive
+logo, our signature colors, our carefully chosen fonts, and our authentic messaging.
+By adhering to these brand guidelines, we ensure that every marketing and communication
+effort not only accurately represents our COMPANY but also embodies our brand's core values
+and vision.
+--- page 3 ---
+Logo
+The company logo should be prominent and visible in all visual communications.
+It should not be placed with another graphic or edited to create a new image.
+For legibility, keep the area around the logo clear.
+The cafe logo colors can not be changed or modified. Use only the provided official images.
+this logo is the representation of our cafe and our values that drive the visual consistency between all our locations and design
+principles. 
+Logo placement guidelines:
+--- page 4 ---
+Logo Construction Grid
+A P O S T E L L Ō
+OMEGA logo with cafe name
+Banner logo with cafe name
+Specify a minimum distance from the edge of the logo to the next visual element
+Minimum size of the logos must be 0.5 inches in width.
+Ap
+stellō
+Speciality Coffee
+Est. 26
+--- page 5 ---
+Alternative Logo
+The color of the logo can not be changed except in greyscale.
+A P O S T E L L Ō
+OMEGA logo with cafe name
+Banner logo with cafe name
+Ap
+stellō
+Speciality Coffee
+Est. 26
+--- page 6 ---
+Color Palette
+we limit it to up to four brand colors.
+please note which is the main color. 
+A secondary color palette may be used to complement the primary palette but never to substitute.
+Consistent use is important.
+The color palette sets a visual tone for the brand. 
+Color palette guidelines
+--- page 7 ---
+Primary Palette
+dark blue
+#011b3d
+light
+yellow
+#fffdf5
+white
+#ffffff
+Blue grey
+#50657e
+main colour
+--- page 8 ---
+Secondary Palette
+Color name
+HEX Code
+CMYK
+RGB
+Color name
+HEX Code
+CMYK
+RGB
+Color name
+HEX Code
+CMYK
+RGB
+Color name
+HEX Code
+CMYK
+RGB
+Color name
+HEX Code
+CMYK
+RGB
+Color name
+HEX Code
+CMYK
+RGB
+Color name
+HEX Code
+CMYK
+RGB
+You can use less colors on the secondary palette
+--- page 9 ---
+we have a font for the logo and heading
+we have a font each for subheadings and body font. Note that these fonts are the same, but can vary in size or style.
+we dont have a standard size for the use of each
+Keep fonts sizing simple and clean
+our signature font contributes to our strong brand. It is considered as a visual component and should be consistent throughout.
+Typography guidelines
+Typography
+--- page 10 ---
+Montserrat
+Open Sans
+montserrat
+montserrat, bold
+open sans
+montserrat
+HEADING
+SUB-HEADING
+BODY
