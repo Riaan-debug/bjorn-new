@@ -175,7 +175,8 @@ export default function SettingsPage() {
     { key: "eventsPhone", label: "Events phone" },
     { key: "instagramUrl", label: "Instagram URL" },
     { key: "whatsappUrl", label: "WhatsApp URL" },
-    { key: "googleBizUrl", label: "Google Business URL" },
+    { key: "googleBizUrl", label: "Google listing URL" },
+    { key: "googleReviewUrl", label: "Google write-a-review URL" },
     { key: "coffeeBlend", label: "Coffee blend" },
     { key: "coffeeNotes", label: "Coffee notes" },
   ];

@@ -75,7 +75,7 @@ export default function AboutPage() {
         </section>
       ) : null}
 
-      {reviews.length || settings.googleBizUrl ? (
+      {reviews.length || settings.googleBizUrl || settings.googleReviewUrl ? (
         <section className="border-t border-line">
           <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8">
             <p className="text-[11px] uppercase tracking-[0.28em] text-mist">From guests</p>

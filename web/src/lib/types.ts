@@ -115,6 +115,7 @@ export type Settings = {
   instagramUrl: string;
   whatsappUrl: string;
   googleBizUrl: string;
+  googleReviewUrl: string;
   publicPhone: string;
   publicEmail: string;
   eventsContactName: string;

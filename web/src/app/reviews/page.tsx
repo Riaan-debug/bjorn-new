@@ -18,9 +18,9 @@ export default function ReviewsPage() {
         <p className="mt-6 max-w-xl text-base leading-8 text-mist">
           A few lines from the counter. If you had a good cup, the honest place to say so is Google.
         </p>
-        {settings.googleBizUrl ? (
+        {settings.googleReviewUrl || settings.googleBizUrl ? (
           <a
-            href={settings.googleBizUrl}
+            href={settings.googleReviewUrl || settings.googleBizUrl}
             target="_blank"
             rel="noreferrer"
             className="mt-8 inline-block bg-navy px-6 py-3 text-[12px] uppercase tracking-[0.22em] text-cream"

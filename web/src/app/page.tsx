@@ -22,7 +22,7 @@ export default function HomePage() {
       <section className="relative min-h-[92vh] overflow-hidden text-cream">
         <div className="absolute inset-0 hero-fallback" />
         <video
-          className="absolute inset-0 h-full w-full object-cover opacity-50"
+          className="absolute inset-0 h-full w-full object-cover"
           autoPlay
           muted
           loop
@@ -31,35 +31,19 @@ export default function HomePage() {
         >
           <source src="/media/hero.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-navy/40 via-navy/35 to-navy" />
+        <div className="absolute inset-0 bg-gradient-to-b from-navy/20 via-navy/35 to-navy" />
         <BeanDrift />
         <div className="relative z-10 mx-auto flex min-h-[92vh] max-w-6xl flex-col justify-end px-5 pb-20 pt-32 sm:px-8">
           <p className="mb-6 text-[12px] font-medium uppercase tracking-[0.22em] text-white">
             Speciality coffee · Smash burgers · Est. 26
           </p>
           <Wordmark invert size="lg" />
-          <p className="mt-8 max-w-xl font-display text-[1.65rem] font-light leading-snug tracking-[0.02em] text-white sm:text-4xl">
-            {settings.slogan}
-          </p>
-          <p className="mt-5 text-[15px] leading-7 tracking-[0.01em] text-white sm:text-lg">
+          <p className="mt-8 text-[15px] leading-7 tracking-[0.01em] text-white sm:text-lg">
             {settings.location}
           </p>
           <p className="mt-1 text-[15px] leading-7 tracking-[0.01em] text-white sm:text-lg">
             {settings.tradingHours}
           </p>
-          {special ? (
-            <div className="mt-8 flex max-w-xl items-center gap-4 border border-cream/25 bg-navy/50 p-4 backdrop-blur-sm">
-              {special.imagePath ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={special.imagePath} alt="" className="h-20 w-20 shrink-0 object-cover" />
-              ) : null}
-              <div>
-                <p className="text-[11px] uppercase tracking-[0.22em] text-cream/60">Today</p>
-                <p className="mt-1 font-display text-xl font-light text-white">{special.name}</p>
-                {special.blurb ? <p className="mt-1 text-sm leading-6 text-cream/75">{special.blurb}</p> : null}
-              </div>
-            </div>
-          ) : null}
           <div className="mt-10 flex flex-wrap gap-4">
             <Link href="/menu" className="btn-cream px-7 py-3.5 text-[13px] font-semibold uppercase tracking-[0.16em]">
               View menu
@@ -71,7 +55,31 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="border-b border-line bg-cream">
+        <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-10">
+          <p className="max-w-3xl font-display text-3xl font-light leading-snug text-navy sm:text-5xl">
+            {settings.slogan}
+          </p>
+        </div>
+      </section>
+
       <SiteImage src={photos.homeStory} label="Café / trailer still" ratio="aspect-[16/9]" className="min-h-[420px] w-full" />
+
+      {special ? (
+        <section className="border-b border-line">
+          <div className="mx-auto flex max-w-6xl items-center gap-5 px-5 py-10 sm:px-8">
+            {special.imagePath ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={special.imagePath} alt="" className="h-24 w-24 shrink-0 object-cover" />
+            ) : null}
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.22em] text-mist">Today</p>
+              <p className="mt-2 font-display text-3xl font-light text-navy">{special.name}</p>
+              {special.blurb ? <p className="mt-2 max-w-xl text-sm leading-7 text-mist">{special.blurb}</p> : null}
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       <section className="mx-auto max-w-6xl px-5 py-16 sm:px-8">
         <p className="text-[11px] uppercase tracking-[0.28em] text-mist">The cup</p>

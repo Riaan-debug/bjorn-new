@@ -326,7 +326,7 @@ function ReviewsEditor({
     <div className="mt-12 max-w-2xl">
       <h2 className="font-display text-xl text-navy">Reviews</h2>
       <p className="mt-1 text-sm text-mist">
-        A short curated list for the Reviews page and About. Google stays the place guests write new ones — add the Business URL in Settings.
+        A short curated list for the Reviews page and About. Google stays the place guests write new ones — add the listing and write-a-review URLs in Settings.
       </p>
       <div className="mt-5 space-y-4">
         {reviews.map((review) => (

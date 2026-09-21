@@ -16,6 +16,7 @@ const schema = z.object({
   instagramUrl: z.string().max(200),
   whatsappUrl: z.string().max(200),
   googleBizUrl: z.string().max(200),
+  googleReviewUrl: z.string().max(200),
   publicPhone: z.string().max(40),
   publicEmail: z.string().max(120),
   eventsContactName: z.string().max(40),

@@ -138,6 +138,7 @@ export function publicSettings() {
     instagramUrl: s.instagramUrl,
     whatsappUrl: s.whatsappUrl,
     googleBizUrl: s.googleBizUrl,
+    googleReviewUrl: s.googleReviewUrl,
     publicPhone: s.publicPhone,
     publicEmail: s.publicEmail,
     eventsContactName: s.eventsContactName,
