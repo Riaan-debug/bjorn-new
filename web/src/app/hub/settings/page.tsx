@@ -4,13 +4,12 @@ import { useEffect, useState } from "react";
 import { HubShell } from "@/components/hub/HubShell";
 import { AmountInput } from "@/components/hub/AmountInput";
 import type { Settings, StaffMember, StaffRole } from "@/lib/types";
+import { toast } from "@/lib/toast";
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState<Settings | null>(null);
   const [accounts, setAccounts] = useState<StaffMember[]>([]);
   const [staffId, setStaffId] = useState("");
-  const [msg, setMsg] = useState("");
-  const [teamMsg, setTeamMsg] = useState("");
   const [teamBusy, setTeamBusy] = useState(false);
   const [newName, setNewName] = useState("");
   const [newPin, setNewPin] = useState("");
@@ -46,7 +45,7 @@ export default function SettingsPage() {
       headers: { "content-type": "application/json" },
       body: JSON.stringify(settings),
     });
-    setMsg(res.ok ? "Saved" : "Could not save");
+    toast(res.ok ? "Saved" : "Could not save", res.ok ? "ok" : "error");
   }
 
   async function download() {
@@ -65,14 +64,13 @@ export default function SettingsPage() {
       headers: { "content-type": "application/json" },
       body: JSON.stringify(data),
     });
-    setMsg(res.ok ? "Backup imported" : "Could not import backup");
+    toast(res.ok ? "Backup imported" : "Could not import backup", res.ok ? "ok" : "error");
   }
 
   async function addPerson(e: React.FormEvent) {
     e.preventDefault();
-    setTeamMsg("");
     if (newPin !== confirmPin) {
-      setTeamMsg("PINs do not match");
+      toast("PINs do not match", "error");
       return;
     }
     setTeamBusy(true);
@@ -84,7 +82,7 @@ export default function SettingsPage() {
     const data = await res.json().catch(() => ({}));
     setTeamBusy(false);
     if (!res.ok) {
-      setTeamMsg(data.error || "Could not add this person");
+      toast(data.error || "Could not add this person", "error");
       return;
     }
     setAccounts(data);
@@ -92,17 +90,16 @@ export default function SettingsPage() {
     setNewPin("");
     setConfirmPin("");
     setNewRole("staff");
-    setTeamMsg("Added");
+    toast("Added");
   }
 
   async function savePerson(account: StaffMember, name: string, role: StaffRole) {
     const next = name.trim();
     if (!next) {
-      setTeamMsg("Enter a name");
+      toast("Enter a name", "error");
       return;
     }
     setTeamBusy(true);
-    setTeamMsg("");
     const res = await fetch("/api/auth/accounts", {
       method: "PATCH",
       headers: { "content-type": "application/json" },
@@ -111,20 +108,19 @@ export default function SettingsPage() {
     const data = await res.json().catch(() => ({}));
     setTeamBusy(false);
     if (!res.ok) {
-      setTeamMsg(data.error || "Could not save this person");
+      toast(data.error || "Could not save this person", "error");
       return;
     }
     setAccounts(data);
-    setTeamMsg("Saved");
+    toast("Saved");
     window.dispatchEvent(new Event("hub-auth-changed"));
   }
 
   async function saveReset(e: React.FormEvent) {
     e.preventDefault();
     if (!resetId) return;
-    setTeamMsg("");
     if (resetPin !== resetConfirm) {
-      setTeamMsg("PINs do not match");
+      toast("PINs do not match", "error");
       return;
     }
     setTeamBusy(true);
@@ -136,14 +132,14 @@ export default function SettingsPage() {
     const data = await res.json().catch(() => ({}));
     setTeamBusy(false);
     if (!res.ok) {
-      setTeamMsg(data.error || "Could not reset PIN");
+      toast(data.error || "Could not reset PIN", "error");
       return;
     }
     setAccounts(data);
     setResetId(null);
     setResetPin("");
     setResetConfirm("");
-    setTeamMsg("PIN reset");
+    toast("PIN reset");
   }
 
   async function remove(account: StaffMember) {
@@ -157,7 +153,7 @@ export default function SettingsPage() {
     const data = await res.json().catch(() => ({}));
     setTeamBusy(false);
     if (!res.ok) {
-      setTeamMsg(data.error || "Could not remove this person");
+      toast(data.error || "Could not remove this person", "error");
       return;
     }
     setAccounts(data);
@@ -174,6 +170,9 @@ export default function SettingsPage() {
     { key: "tradingHours", label: "Trading hours" },
     { key: "publicPhone", label: "Public phone" },
     { key: "publicEmail", label: "Public email" },
+    { key: "eventsContactName", label: "Events contact name" },
+    { key: "eventsContactRole", label: "Events contact role" },
+    { key: "eventsPhone", label: "Events phone" },
     { key: "instagramUrl", label: "Instagram URL" },
     { key: "whatsappUrl", label: "WhatsApp URL" },
     { key: "googleBizUrl", label: "Google Business URL" },
@@ -201,7 +200,6 @@ export default function SettingsPage() {
           <AmountInput value={settings.loyaltyFreeAt} min={3} onChange={(loyaltyFreeAt) => setSettings({ ...settings, loyaltyFreeAt })} className="mt-1 w-full border border-line bg-white px-3 py-2 text-navy" />
         </label>
         <button className="w-fit bg-navy px-5 py-2 text-[12px] uppercase tracking-[0.16em] text-cream">Save settings</button>
-        {msg ? <p className="text-sm text-navy">{msg}</p> : null}
       </form>
 
       <div className="mt-12 max-w-2xl border-t border-line pt-10">
@@ -225,7 +223,6 @@ export default function SettingsPage() {
                 setResetId(resetId === account.id ? null : account.id);
                 setResetPin("");
                 setResetConfirm("");
-                setTeamMsg("");
               }}
               onSave={(name, role) => savePerson(account, name, role)}
               onRemove={() => remove(account)}
@@ -279,7 +276,6 @@ export default function SettingsPage() {
             Add to team
           </button>
         </form>
-        {teamMsg ? <p className="mt-4 text-sm text-navy">{teamMsg}</p> : null}
       </div>
 
       <div className="mt-10 flex flex-wrap gap-3">

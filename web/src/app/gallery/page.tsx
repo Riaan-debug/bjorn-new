@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { SiteChrome } from "@/components/site/SiteChrome";
 import { SiteImage } from "@/components/site/SiteImage";
 import { publicSite } from "@/lib/db";
@@ -6,6 +7,8 @@ import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Gallery" };
+
+const TILTS = [-2.2, 1.6, -1.1, 2.4, 0.6, -1.8, 1.3, -0.7, 2];
 
 export default function GalleryPage() {
   const photos = publicSite().photos;
@@ -21,9 +24,18 @@ export default function GalleryPage() {
         <p className="mt-4 max-w-2xl text-base leading-8 text-mist">
           Stills from the Olympus counter, the trailer, and the cup. Bjorn adds these from the hub.
         </p>
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {slots.map((slot) => (
-            <SiteImage key={slot.id} src={photos[slot.id]} label={slot.label} />
+        <div className="pinboard mt-12">
+          {slots.map((slot, index) => (
+            <figure
+              key={slot.id}
+              className="pinboard-card border border-line bg-white p-2"
+              style={{ "--tilt": `${TILTS[index % TILTS.length]}deg` } as CSSProperties}
+            >
+              <SiteImage src={photos[slot.id]} label={slot.label} />
+              <figcaption className="px-1 py-3 text-[11px] uppercase tracking-[0.18em] text-mist">
+                {slot.label}
+              </figcaption>
+            </figure>
           ))}
         </div>
       </div>

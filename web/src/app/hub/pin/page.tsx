@@ -2,19 +2,18 @@
 
 import { useState } from "react";
 import { HubShell } from "@/components/hub/HubShell";
+import { toast } from "@/lib/toast";
 
 export default function ChangePinPage() {
   const [currentPin, setCurrentPin] = useState("");
   const [newPin, setNewPin] = useState("");
   const [confirmPin, setConfirmPin] = useState("");
-  const [msg, setMsg] = useState("");
   const [busy, setBusy] = useState(false);
 
   async function changePin(e: React.FormEvent) {
     e.preventDefault();
-    setMsg("");
     if (newPin !== confirmPin) {
-      setMsg("New PINs do not match");
+      toast("New PINs do not match", "error");
       return;
     }
     setBusy(true);
@@ -26,13 +25,13 @@ export default function ChangePinPage() {
     const data = await res.json().catch(() => ({}));
     setBusy(false);
     if (!res.ok) {
-      setMsg(data.error || "Could not change PIN");
+      toast(data.error || "Could not change PIN", "error");
       return;
     }
     setCurrentPin("");
     setNewPin("");
     setConfirmPin("");
-    setMsg("PIN updated");
+    toast("PIN updated");
   }
 
   return (
@@ -75,7 +74,6 @@ export default function ChangePinPage() {
         <button disabled={busy} className="w-fit bg-navy px-5 py-2 text-[12px] uppercase tracking-[0.16em] text-cream disabled:opacity-60">
           Change PIN
         </button>
-        {msg ? <p className="text-sm text-navy">{msg}</p> : null}
       </form>
     </HubShell>
   );

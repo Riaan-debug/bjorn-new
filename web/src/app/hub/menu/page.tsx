@@ -5,6 +5,7 @@ import { HubShell } from "@/components/hub/HubShell";
 import { AmountInput } from "@/components/hub/AmountInput";
 import type { MenuItem } from "@/lib/types";
 import { zar } from "@/lib/format";
+import { toast } from "@/lib/toast";
 
 const empty: MenuItem = {
   id: "",
@@ -36,22 +37,32 @@ export default function HubMenuPage() {
   async function save(e: React.FormEvent) {
     e.preventDefault();
     if (!edit) return;
-    await fetch("/api/hub/menu", {
+    const res = await fetch("/api/hub/menu", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(edit),
     });
+    if (!res.ok) {
+      toast("Could not save", "error");
+      return;
+    }
     setEdit(null);
+    toast("Saved");
     load();
   }
 
   async function remove(id: string) {
     if (!confirm("Remove this item from the menu?")) return;
-    await fetch("/api/hub/menu", {
+    const res = await fetch("/api/hub/menu", {
       method: "DELETE",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ id }),
     });
+    if (!res.ok) {
+      toast("Could not remove that item", "error");
+      return;
+    }
+    toast("Removed");
     load();
   }
 
@@ -114,17 +125,21 @@ export default function HubMenuPage() {
       <div className="grid gap-3 md:grid-cols-2">
         {filtered.map((item) => (
           <button key={item.id} type="button" onClick={() => { setUploadError(""); setEdit(item); }} className={`border p-4 text-left ${item.active ? "border-line bg-white" : "border-line bg-cream opacity-60"}`}>
-            <div className="flex justify-between gap-3">
-              <div className="flex min-w-0 items-start gap-3">
-                {item.imagePath ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={item.imagePath} alt="" className="h-14 w-14 shrink-0 object-cover" />
-                ) : null}
-                <p className="font-display text-lg text-navy">{item.name}</p>
-              </div>
-              <p className="text-sm text-mist">{item.sizes.map((s) => zar(s.price)).join(" · ")}</p>
+            <div className="flex min-w-0 items-start gap-3">
+              {item.imagePath ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={item.imagePath} alt="" className="h-14 w-14 shrink-0 object-cover" />
+              ) : null}
+              <p className="font-display text-lg text-navy">{item.name}</p>
             </div>
             <p className="mt-1 text-xs uppercase tracking-[0.16em] text-mist">{item.kind} · {item.cat}{item.featured ? " · Featured" : ""}</p>
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {item.sizes.map((size) => (
+                <span key={`${item.id}-${size.label}`} className="border border-line bg-cream px-2 py-1 text-[11px] font-semibold text-navy">
+                  {size.label} {zar(size.price)}
+                </span>
+              ))}
+            </div>
             <p className="mt-2 text-sm text-mist">{item.description}</p>
           </button>
         ))}

@@ -5,6 +5,7 @@ import { HubShell } from "@/components/hub/HubShell";
 import { AmountInput } from "@/components/hub/AmountInput";
 import type { DailyEntry } from "@/lib/types";
 import { prettyDate, zar } from "@/lib/format";
+import { toast } from "@/lib/toast";
 
 export default function DailyPage() {
   const [log, setLog] = useState<DailyEntry[]>([]);
@@ -20,12 +21,17 @@ export default function DailyPage() {
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
-    await fetch("/api/hub/daily", {
+    const res = await fetch("/api/hub/daily", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ cups, revenue, notes }),
     });
+    if (!res.ok) {
+      toast("Could not save the day", "error");
+      return;
+    }
     setNotes("");
+    toast("Day saved");
     load();
   }
 

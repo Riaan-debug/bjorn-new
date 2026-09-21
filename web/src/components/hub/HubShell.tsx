@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Wordmark } from "@/components/site/Wordmark";
 import { BackToTop } from "@/components/site/BackToTop";
+import { ToastHost } from "@/components/hub/ToastHost";
 import type { StaffRole } from "@/lib/types";
 
 const NAV = [
@@ -107,14 +108,17 @@ export function HubShell({ children, title }: { children: React.ReactNode; title
         </div>
       </aside>
       {open ? <button className="fixed inset-0 z-30 bg-navy/40 md:hidden" onClick={() => setOpen(false)} /> : null}
-      <header className="sticky top-0 z-20 flex items-center justify-between border-b border-line bg-cream/90 px-5 py-4 backdrop-blur">
-        <button type="button" className="text-navy md:hidden" onClick={() => setOpen(true)}>Menu</button>
-        <h1 className="font-display text-xl text-navy">{title}</h1>
-        <span className="text-xs text-mist">
+      <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-line bg-cream px-5">
+        <button type="button" className="text-[13px] font-medium uppercase tracking-[0.2em] text-navy md:hidden" onClick={() => setOpen(true)}>
+          Menu
+        </button>
+        <h1 className="font-display text-lg text-navy">{title}</h1>
+        <span className="text-[11px] uppercase tracking-[0.14em] text-mist">
           {new Date().toLocaleDateString("en-ZA", { weekday: "long", day: "numeric", month: "long" })}
         </span>
       </header>
       <div className="px-5 py-8 sm:px-8">{children}</div>
+      <ToastHost />
       <BackToTop />
     </div>
   );

@@ -18,6 +18,9 @@ const schema = z.object({
   googleBizUrl: z.string().max(200),
   publicPhone: z.string().max(40),
   publicEmail: z.string().max(120),
+  eventsContactName: z.string().max(40),
+  eventsContactRole: z.string().max(40),
+  eventsPhone: z.string().max(40),
   coffeeBlend: z.string().max(160),
   coffeeNotes: z.string().max(240),
 });

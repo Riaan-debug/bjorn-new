@@ -1,4 +1,4 @@
-import type { SiteContent } from "./types";
+import type { SiteContent, SiteReview, TeamPerson } from "./types";
 
 export const SITE_PHOTO_SLOTS = [
   { id: "homeStory", label: "Café / trailer still", group: "Home" },
@@ -28,6 +28,11 @@ export const GALLERY_SLOT_IDS = [
 export const DEFAULT_SITE: SiteContent = {
   special: { active: false, name: "", blurb: "", imagePath: "" },
   photos: Object.fromEntries(SITE_PHOTO_SLOTS.map((slot) => [slot.id, ""])),
+  team: [
+    { id: "t-bjorn", name: "Bjorn", role: "Owner", imagePath: "" },
+    { id: "t-joan", name: "Joan", role: "Office manager", imagePath: "" },
+  ],
+  reviews: [],
 };
 
 export function cleanImagePath(value: unknown) {
@@ -35,6 +40,43 @@ export function cleanImagePath(value: unknown) {
   if (!path) return "";
   if (!path.startsWith("/media/") || path.includes("..") || path.includes("\\")) return "";
   return path.slice(0, 200);
+}
+
+function cleanTeam(raw?: TeamPerson[] | null): TeamPerson[] {
+  const list = Array.isArray(raw) ? raw : DEFAULT_SITE.team;
+  const seen = new Set<string>();
+  const next: TeamPerson[] = [];
+  for (const row of list) {
+    const name = String(row?.name ?? "").trim().slice(0, 40);
+    if (!name) continue;
+    const id = String(row?.id ?? "").trim().slice(0, 40) || `t-${next.length + 1}`;
+    if (seen.has(id)) continue;
+    seen.add(id);
+    next.push({
+      id,
+      name,
+      role: String(row?.role ?? "").trim().slice(0, 40),
+      imagePath: cleanImagePath(row?.imagePath),
+    });
+    if (next.length >= 12) break;
+  }
+  return next;
+}
+
+function cleanReviews(raw?: SiteReview[] | null): SiteReview[] {
+  const list = Array.isArray(raw) ? raw : [];
+  const next: SiteReview[] = [];
+  for (const row of list) {
+    const quote = String(row?.quote ?? "").trim().slice(0, 400);
+    if (!quote) continue;
+    next.push({
+      id: String(row?.id ?? "").trim().slice(0, 40) || `r-${next.length + 1}`,
+      quote,
+      name: String(row?.name ?? "").trim().slice(0, 80),
+    });
+    if (next.length >= 12) break;
+  }
+  return next;
 }
 
 export function mergeSite(raw?: Partial<SiteContent> | null): SiteContent {
@@ -50,5 +92,7 @@ export function mergeSite(raw?: Partial<SiteContent> | null): SiteContent {
       imagePath: cleanImagePath(raw?.special?.imagePath),
     },
     photos,
+    team: cleanTeam(raw?.team),
+    reviews: cleanReviews(raw?.reviews),
   };
 }

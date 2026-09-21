@@ -39,6 +39,9 @@ yarn-error.log*
 /data/*.db-*
 /data/.secret
 
+# local tunnel binary
+/scripts/*.exe
+
 # vercel
 .vercel
 

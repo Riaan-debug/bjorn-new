@@ -137,8 +137,12 @@ export function publicSettings() {
     tradingHours: s.tradingHours,
     instagramUrl: s.instagramUrl,
     whatsappUrl: s.whatsappUrl,
+    googleBizUrl: s.googleBizUrl,
     publicPhone: s.publicPhone,
     publicEmail: s.publicEmail,
+    eventsContactName: s.eventsContactName,
+    eventsContactRole: s.eventsContactRole,
+    eventsPhone: s.eventsPhone,
     coffeeBlend: s.coffeeBlend,
     coffeeNotes: s.coffeeNotes,
     loyaltyFreeAt: s.loyaltyFreeAt,
@@ -173,5 +177,7 @@ export function publicSite() {
   return {
     special,
     photos: site.photos,
+    team: site.team.filter((person) => person.name),
+    reviews: site.reviews.filter((review) => review.quote),
   };
 }

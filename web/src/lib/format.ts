@@ -36,3 +36,10 @@ export function priceRange(sizes: { price: number }[]) {
   const max = Math.max(...prices);
   return min === max ? zar(min) : `${zar(min)} – ${zar(max)}`;
 }
+
+export function waMe(phone: string) {
+  const digits = phone.replace(/\D/g, "");
+  if (!digits) return "";
+  const intl = digits.startsWith("0") ? `27${digits.slice(1)}` : digits;
+  return `https://wa.me/${intl}`;
+}

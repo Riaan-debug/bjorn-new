@@ -5,6 +5,7 @@ const isDev = process.env.NODE_ENV !== "production";
 const nextConfig: NextConfig = {
   serverExternalPackages: ["better-sqlite3"],
   poweredByHeader: false,
+  allowedDevOrigins: ["*.trycloudflare.com"],
   async headers() {
     return [
       {

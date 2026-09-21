@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { HubShell } from "@/components/hub/HubShell";
 import { AmountInput } from "@/components/hub/AmountInput";
 import type { StockItem } from "@/lib/types";
+import { toast } from "@/lib/toast";
 
 const empty: StockItem = { id: "", name: "", cat: "Other", unit: "each", count: 0, reorder: 0 };
 
@@ -23,12 +24,17 @@ export default function StockPage() {
   async function save(e: React.FormEvent) {
     e.preventDefault();
     if (!edit) return;
-    await fetch("/api/hub/stock", {
+    const res = await fetch("/api/hub/stock", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(edit),
     });
+    if (!res.ok) {
+      toast("Could not save", "error");
+      return;
+    }
     setEdit(null);
+    toast("Saved");
     load();
   }
 
@@ -83,7 +89,7 @@ export default function StockPage() {
           <thead><tr><th>Item</th><th>Category</th><th>Count</th><th>Reorder</th></tr></thead>
           <tbody>
             {filtered.map((item) => (
-              <tr key={item.id} className={item.count <= item.reorder ? "bg-red-50" : ""}>
+              <tr key={item.id} className={item.count <= item.reorder ? "low" : ""}>
                 <td><button type="button" className="text-left font-medium text-navy" onClick={() => setEdit(item)}>{item.name}</button></td>
                 <td>{item.cat}</td>
                 <td>{item.count} {item.unit}</td>

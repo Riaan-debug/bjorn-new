@@ -2,15 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import { HubShell } from "@/components/hub/HubShell";
-import type { SiteContent } from "@/lib/types";
+import type { SiteContent, SiteReview, TeamPerson } from "@/lib/types";
 import { DEFAULT_SITE, SITE_PHOTO_SLOTS } from "@/lib/site";
+import { toast } from "@/lib/toast";
 
 const GROUPS = ["Home", "About", "Events", "Gallery"] as const;
 
 export default function HubSitePage() {
   const [site, setSite] = useState<SiteContent>(DEFAULT_SITE);
   const [ready, setReady] = useState(false);
-  const [msg, setMsg] = useState("");
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState("");
   const siteRef = useRef(site);
@@ -28,7 +28,6 @@ export default function HubSitePage() {
 
   async function saveSite(next: SiteContent, okMessage: string) {
     setBusy(true);
-    setMsg("");
     const res = await fetch("/api/hub/site", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -37,19 +36,19 @@ export default function HubSitePage() {
     const data = await res.json().catch(() => ({}));
     setBusy(false);
     if (!res.ok) {
-      setMsg(data.error || "Could not save");
+      toast(data.error || "Could not save", "error");
       return;
     }
     siteRef.current = data;
     setSite(data);
-    setMsg(okMessage);
+    toast(okMessage);
   }
 
   async function saveSpecial(e: React.FormEvent) {
     e.preventDefault();
     const current = siteRef.current;
     if (current.special.active && !current.special.name.trim() && !current.special.imagePath) {
-      setMsg("Add a name or a photo before showing this on the website");
+      toast("Add a name or a photo before showing this on the website", "error");
       return;
     }
     await saveSite(
@@ -60,7 +59,6 @@ export default function HubSitePage() {
 
   async function upload(file: File, target: "special" | string) {
     setUploading(target);
-    setMsg("");
     const body = new FormData();
     body.append("file", file);
     body.append("folder", "site");
@@ -68,13 +66,11 @@ export default function HubSitePage() {
     const data = await res.json().catch(() => ({}));
     setUploading("");
     if (!res.ok) {
-      setMsg(data.error || "Could not upload that photo");
+      toast(data.error || "Could not upload that photo", "error");
       return;
     }
     const current = siteRef.current;
-    const next: SiteContent = target === "special"
-      ? { ...current, special: { ...current.special, imagePath: data.path } }
-      : { ...current, photos: { ...current.photos, [target]: data.path } };
+    const next = withPhoto(current, target, data.path);
     siteRef.current = next;
     setSite(next);
     await saveSite(next, "Photo saved");
@@ -82,9 +78,7 @@ export default function HubSitePage() {
 
   async function clearPhoto(target: "special" | string) {
     const current = siteRef.current;
-    const next: SiteContent = target === "special"
-      ? { ...current, special: { ...current.special, imagePath: "" } }
-      : { ...current, photos: { ...current.photos, [target]: "" } };
+    const next = withPhoto(current, target, "");
     siteRef.current = next;
     setSite(next);
     await saveSite(next, "Photo removed");
@@ -95,12 +89,12 @@ export default function HubSitePage() {
   return (
     <HubShell title="Site">
       <p className="mb-8 max-w-2xl text-sm text-mist">
-        Today’s special and the photos guests see on the website. Staff do not see this page.
+        Today’s special, photos, the team on About, and the reviews list. Staff do not see this page.
       </p>
 
       <form onSubmit={saveSpecial} className="max-w-2xl border border-line bg-white p-5">
         <h2 className="font-display text-xl text-navy">Today</h2>
-        <p className="mt-1 text-sm text-mist">Turn this on, type the name, then Save special. It shows on the homepage film and on the menu.</p>
+        <p className="mt-1 text-sm text-mist">Turn this on, type the name, then Save special. It shows on the homepage film and across the bottom of the menu board.</p>
         <label className="mt-4 flex items-center gap-2 text-sm text-navy">
           <input
             type="checkbox"
@@ -159,8 +153,237 @@ export default function HubSitePage() {
           </section>
         ))}
       </div>
-      {msg ? <p className="mt-6 text-sm text-navy">{msg}</p> : null}
+
+      <TeamEditor
+        team={site.team}
+        busy={busy}
+        uploading={uploading}
+        onChange={(team) => setSite({ ...site, team })}
+        onSave={(team) => saveSite({ ...siteRef.current, team }, "Team saved")}
+        onUpload={(file, id) => upload(file, `team:${id}`)}
+        onClear={(id) => clearPhoto(`team:${id}`)}
+      />
+
+      <ReviewsEditor
+        reviews={site.reviews}
+        busy={busy}
+        onChange={(reviews) => setSite({ ...site, reviews })}
+        onSave={(reviews) => saveSite({ ...siteRef.current, reviews }, "Reviews saved")}
+      />
     </HubShell>
+  );
+}
+
+function withPhoto(current: SiteContent, target: "special" | string, imagePath: string): SiteContent {
+  if (target === "special") {
+    return { ...current, special: { ...current.special, imagePath } };
+  }
+  if (target.startsWith("team:")) {
+    const id = target.slice(5);
+    return {
+      ...current,
+      team: current.team.map((person) => (person.id === id ? { ...person, imagePath } : person)),
+    };
+  }
+  return { ...current, photos: { ...current.photos, [target]: imagePath } };
+}
+
+function TeamEditor({
+  team,
+  busy,
+  uploading,
+  onChange,
+  onSave,
+  onUpload,
+  onClear,
+}: {
+  team: TeamPerson[];
+  busy: boolean;
+  uploading: string;
+  onChange: (team: TeamPerson[]) => void;
+  onSave: (team: TeamPerson[]) => Promise<void>;
+  onUpload: (file: File, id: string) => void;
+  onClear: (id: string) => void;
+}) {
+  const [name, setName] = useState("");
+  const [role, setRole] = useState("");
+
+  function addPerson(e: React.FormEvent) {
+    e.preventDefault();
+    const nextName = name.trim();
+    if (!nextName) return;
+    const person: TeamPerson = {
+      id: `t-${Date.now().toString(36)}`,
+      name: nextName,
+      role: role.trim(),
+      imagePath: "",
+    };
+    const next = [...team, person];
+    onChange(next);
+    setName("");
+    setRole("");
+    void onSave(next);
+  }
+
+  return (
+    <div className="mt-12 max-w-2xl">
+      <h2 className="font-display text-xl text-navy">Meet the team</h2>
+      <p className="mt-1 text-sm text-mist">
+        Names and photos on the About page. This is the café face, not hub logins — those stay in Settings.
+      </p>
+      <div className="mt-5 space-y-4">
+        {team.map((person) => (
+          <div key={person.id} className="border border-line bg-white p-4">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <label className="text-sm text-mist">Name
+                <input
+                  value={person.name}
+                  onChange={(e) => onChange(team.map((row) => (row.id === person.id ? { ...row, name: e.target.value } : row)))}
+                  className="mt-1 w-full border border-line px-3 py-2 text-navy"
+                />
+              </label>
+              <label className="text-sm text-mist">Role
+                <input
+                  value={person.role}
+                  onChange={(e) => onChange(team.map((row) => (row.id === person.id ? { ...row, role: e.target.value } : row)))}
+                  className="mt-1 w-full border border-line px-3 py-2 text-navy"
+                />
+              </label>
+            </div>
+            <PhotoDrop
+              path={person.imagePath}
+              busy={uploading === `team:${person.id}`}
+              onFile={(file) => onUpload(file, person.id)}
+              onClear={() => onClear(person.id)}
+            />
+            <div className="mt-3 flex flex-wrap gap-3">
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => onSave(team)}
+                className="bg-navy px-4 py-2 text-[12px] uppercase tracking-[0.16em] text-cream disabled:opacity-60"
+              >
+                Save
+              </button>
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => {
+                  const next = team.filter((row) => row.id !== person.id);
+                  onChange(next);
+                  void onSave(next);
+                }}
+                className="px-3 py-2 text-[12px] uppercase tracking-[0.16em] text-red-700 disabled:opacity-60"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+      <form onSubmit={addPerson} className="mt-6 grid gap-3 border border-line bg-white p-4">
+        <h3 className="font-display text-lg text-navy">Add someone</h3>
+        <label className="text-sm text-mist">Name
+          <input value={name} onChange={(e) => setName(e.target.value)} className="mt-1 w-full border border-line px-3 py-2 text-navy" required />
+        </label>
+        <label className="text-sm text-mist">Role
+          <input value={role} onChange={(e) => setRole(e.target.value)} className="mt-1 w-full border border-line px-3 py-2 text-navy" />
+        </label>
+        <button disabled={busy} className="w-fit bg-navy px-5 py-2 text-[12px] uppercase tracking-[0.16em] text-cream disabled:opacity-60">
+          Add to About
+        </button>
+      </form>
+    </div>
+  );
+}
+
+function ReviewsEditor({
+  reviews,
+  busy,
+  onChange,
+  onSave,
+}: {
+  reviews: SiteReview[];
+  busy: boolean;
+  onChange: (reviews: SiteReview[]) => void;
+  onSave: (reviews: SiteReview[]) => Promise<void>;
+}) {
+  const [quote, setQuote] = useState("");
+  const [name, setName] = useState("");
+
+  function addReview(e: React.FormEvent) {
+    e.preventDefault();
+    const nextQuote = quote.trim();
+    if (!nextQuote) return;
+    const next = [...reviews, { id: `r-${Date.now().toString(36)}`, quote: nextQuote, name: name.trim() }];
+    onChange(next);
+    setQuote("");
+    setName("");
+    void onSave(next);
+  }
+
+  return (
+    <div className="mt-12 max-w-2xl">
+      <h2 className="font-display text-xl text-navy">Reviews</h2>
+      <p className="mt-1 text-sm text-mist">
+        A short curated list for the Reviews page and About. Google stays the place guests write new ones — add the Business URL in Settings.
+      </p>
+      <div className="mt-5 space-y-4">
+        {reviews.map((review) => (
+          <div key={review.id} className="border border-line bg-white p-4">
+            <label className="text-sm text-mist">Quote
+              <textarea
+                value={review.quote}
+                onChange={(e) => onChange(reviews.map((row) => (row.id === review.id ? { ...row, quote: e.target.value } : row)))}
+                rows={3}
+                className="mt-1 w-full border border-line px-3 py-2 text-navy"
+              />
+            </label>
+            <label className="mt-3 block text-sm text-mist">Name
+              <input
+                value={review.name}
+                onChange={(e) => onChange(reviews.map((row) => (row.id === review.id ? { ...row, name: e.target.value } : row)))}
+                className="mt-1 w-full border border-line px-3 py-2 text-navy"
+              />
+            </label>
+            <div className="mt-3 flex flex-wrap gap-3">
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => onSave(reviews)}
+                className="bg-navy px-4 py-2 text-[12px] uppercase tracking-[0.16em] text-cream disabled:opacity-60"
+              >
+                Save
+              </button>
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => {
+                  const next = reviews.filter((row) => row.id !== review.id);
+                  onChange(next);
+                  void onSave(next);
+                }}
+                className="px-3 py-2 text-[12px] uppercase tracking-[0.16em] text-red-700 disabled:opacity-60"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+      <form onSubmit={addReview} className="mt-6 grid gap-3 border border-line bg-white p-4">
+        <h3 className="font-display text-lg text-navy">Add a line</h3>
+        <label className="text-sm text-mist">Quote
+          <textarea value={quote} onChange={(e) => setQuote(e.target.value)} rows={3} className="mt-1 w-full border border-line px-3 py-2 text-navy" required />
+        </label>
+        <label className="text-sm text-mist">Name
+          <input value={name} onChange={(e) => setName(e.target.value)} className="mt-1 w-full border border-line px-3 py-2 text-navy" />
+        </label>
+        <button disabled={busy} className="w-fit bg-navy px-5 py-2 text-[12px] uppercase tracking-[0.16em] text-cream disabled:opacity-60">
+          Add review
+        </button>
+      </form>
+    </div>
   );
 }
 

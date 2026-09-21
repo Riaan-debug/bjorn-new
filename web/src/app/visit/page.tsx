@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { SiteChrome } from "@/components/site/SiteChrome";
 import { ContactForm } from "@/components/site/ContactForm";
 import { publicSettings } from "@/lib/db";
@@ -42,7 +43,9 @@ export default function VisitPage() {
         <div>
           <h2 className="font-display text-3xl font-light text-navy">Write to us</h2>
           <p className="mt-3 text-sm leading-7 text-mist">
-            Events, wholesale beans, or a weekday table. We keep messages on our side and reply from the café.
+            Wholesale beans, or a weekday table. Event bookings go on the{" "}
+            <Link href="/events" className="text-navy underline underline-offset-4">Events</Link> page.
+            We keep messages on our side and reply from the café.
           </p>
           <ContactForm />
         </div>

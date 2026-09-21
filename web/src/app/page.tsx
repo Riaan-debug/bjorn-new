@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BeanDrift } from "@/components/site/BeanDrift";
 import { SiteChrome } from "@/components/site/SiteChrome";
 import { SiteImage } from "@/components/site/SiteImage";
 import { Wordmark } from "@/components/site/Wordmark";
@@ -9,7 +10,9 @@ export const dynamic = "force-dynamic";
 
 export default function HomePage() {
   const settings = publicSettings();
-  const featured = publicMenu().filter((item) => item.featured).slice(0, 6);
+  const featured = publicMenu().filter((item) => item.featured);
+  const drinks = featured.filter((item) => item.kind === "drink").slice(0, 5);
+  const food = featured.filter((item) => item.kind === "food").slice(0, 5);
   const site = publicSite();
   const photos = site.photos;
   const special = site.special;
@@ -29,7 +32,8 @@ export default function HomePage() {
           <source src="/media/hero.mp4" type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-gradient-to-b from-navy/40 via-navy/35 to-navy" />
-        <div className="relative mx-auto flex min-h-[92vh] max-w-6xl flex-col justify-end px-5 pb-20 pt-32 sm:px-8">
+        <BeanDrift />
+        <div className="relative z-10 mx-auto flex min-h-[92vh] max-w-6xl flex-col justify-end px-5 pb-20 pt-32 sm:px-8">
           <p className="mb-6 text-[12px] font-medium uppercase tracking-[0.22em] text-white">
             Speciality coffee · Smash burgers · Est. 26
           </p>
@@ -67,24 +71,29 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-6xl gap-12 px-5 py-24 sm:px-8 md:grid-cols-2 md:items-center">
-        <div>
-          <p className="text-[11px] uppercase tracking-[0.28em] text-mist">The cup</p>
-          <h2 className="mt-3 font-display text-4xl font-light text-navy">Sent, not just served.</h2>
-          <p className="mt-5 max-w-md text-base leading-8 text-mist">
-            Apostellō is the Greek for “to send”. Every shot is a Guatemala Hills and Brazil Peaberry blend,
-            pulled at 1:2.4 for 28–32 seconds, then handed over like it matters.
-          </p>
-          <p className="mt-4 text-sm text-navy">{settings.coffeeBlend}</p>
-          <Link href="/about" className="mt-8 inline-block text-[12px] uppercase tracking-[0.22em] text-navy underline underline-offset-4">
-            The story
-          </Link>
-        </div>
-        <SiteImage src={photos.homeStory} label="Café / trailer still" className="min-h-[360px]" />
+      <SiteImage src={photos.homeStory} label="Café / trailer still" ratio="aspect-[16/9]" className="min-h-[420px] w-full" />
+
+      <section className="mx-auto max-w-6xl px-5 py-16 sm:px-8">
+        <p className="text-[11px] uppercase tracking-[0.28em] text-mist">The cup</p>
+        <h2 className="mt-3 max-w-xl font-display text-4xl font-light text-navy">Sent, not just served.</h2>
+        <p className="mt-5 max-w-xl text-base leading-8 text-mist">
+          Apostellō is the Greek for “to send”. Every shot is a Guatemala Hills and Brazil Peaberry blend,
+          pulled at 1:2.4 for 28–32 seconds, then handed over like it matters.
+        </p>
+        <p className="mt-4 text-sm text-navy">{settings.coffeeBlend}</p>
+        <Link href="/about" className="mt-8 inline-block text-[12px] uppercase tracking-[0.22em] text-navy underline underline-offset-4">
+          The story
+        </Link>
+      </section>
+
+      <section className="grid gap-3 px-5 sm:px-8 md:grid-cols-3 md:px-0">
+        <SiteImage src={photos.homeSmash} label="Smash burger still" className="min-h-[320px]" />
+        <SiteImage src={photos.homePour} label="Espresso / pour" className="min-h-[320px]" />
+        <SiteImage src={photos.homeCounter} label="Olympus counter" className="min-h-[320px]" />
       </section>
 
       <section className="bg-navy text-cream">
-        <div className="mx-auto max-w-6xl px-5 py-20 sm:px-8">
+        <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8">
           <div className="flex items-end justify-between gap-6">
             <div>
               <p className="text-[11px] uppercase tracking-[0.28em] text-cream/50">From the counter</p>
@@ -94,24 +103,39 @@ export default function HomePage() {
               Full menu
             </Link>
           </div>
-          <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {featured.map((item) => (
-              <article key={item.id} className="border border-cream/10 p-6">
-                <p className="text-[11px] uppercase tracking-[0.2em] text-cream/45">{item.cat}</p>
-                <h3 className="mt-3 font-display text-2xl font-light">{item.name}</h3>
-                <p className="mt-3 text-sm leading-6 text-cream/65">{item.description}</p>
-                <p className="mt-6 text-sm text-cream">{priceRange(item.sizes)}</p>
-              </article>
-            ))}
+          <div className="mt-10 grid gap-12 border-t border-cream/15 pt-10 md:grid-cols-2 md:divide-x md:divide-cream/15">
+            <HomeColumn title="Drinks" items={drinks} className="md:pr-12" />
+            <HomeColumn title="Food" items={food} className="md:pl-12" />
           </div>
+          <Link href="/menu" className="mt-10 inline-block text-[12px] uppercase tracking-[0.22em] text-cream/70 md:hidden">
+            Full menu
+          </Link>
         </div>
       </section>
-
-      <section className="mx-auto grid max-w-6xl gap-8 px-5 py-24 sm:px-8 md:grid-cols-3">
-        <SiteImage src={photos.homeSmash} label="Smash burger still" />
-        <SiteImage src={photos.homePour} label="Espresso / pour" />
-        <SiteImage src={photos.homeCounter} label="Olympus counter" />
-      </section>
     </SiteChrome>
+  );
+}
+
+function HomeColumn({
+  title,
+  items,
+  className = "",
+}: {
+  title: string;
+  items: ReturnType<typeof publicMenu>;
+  className?: string;
+}) {
+  return (
+    <div className={className}>
+      <h3 className="text-[11px] uppercase tracking-[0.26em] text-cream/45">{title}</h3>
+      <ul className="mt-4 space-y-3">
+        {items.map((item) => (
+          <li key={item.id} className="flex items-baseline justify-between gap-4">
+            <span className="font-display text-xl font-light">{item.name}</span>
+            <span className="shrink-0 text-sm text-cream/70">{priceRange(item.sizes)}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

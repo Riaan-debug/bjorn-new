@@ -47,6 +47,15 @@ export type DailyEntry = {
   notes: string;
 };
 
+export type EnquiryKind = "message" | "event";
+
+export type EnquiryEvent = {
+  date: string;
+  guests: number;
+  power: boolean;
+  trailerAccess: boolean;
+};
+
 export type Enquiry = {
   id: string;
   name: string;
@@ -55,6 +64,8 @@ export type Enquiry = {
   message: string;
   createdAt: string;
   read: boolean;
+  kind?: EnquiryKind;
+  event?: EnquiryEvent;
 };
 
 export type StaffRole = "owner" | "staff";
@@ -72,9 +83,24 @@ export type SiteSpecial = {
   imagePath: string;
 };
 
+export type TeamPerson = {
+  id: string;
+  name: string;
+  role: string;
+  imagePath: string;
+};
+
+export type SiteReview = {
+  id: string;
+  quote: string;
+  name: string;
+};
+
 export type SiteContent = {
   special: SiteSpecial;
   photos: Record<string, string>;
+  team: TeamPerson[];
+  reviews: SiteReview[];
 };
 
 export type Settings = {
@@ -91,6 +117,9 @@ export type Settings = {
   googleBizUrl: string;
   publicPhone: string;
   publicEmail: string;
+  eventsContactName: string;
+  eventsContactRole: string;
+  eventsPhone: string;
   coffeeBlend: string;
   coffeeNotes: string;
   seeded: boolean;

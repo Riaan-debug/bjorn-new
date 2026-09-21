@@ -15,7 +15,7 @@ export function SiteChrome({
 
   return (
     <div className="min-h-screen bg-cream">
-      {darkHero ? <SiteHeader /> : <LightHeader />}
+      <SiteHeader darkHero={darkHero} />
       <main>{children}</main>
       <footer className="border-t border-line bg-navy text-cream">
         <div className="mx-auto grid max-w-6xl gap-10 px-5 py-16 sm:px-8 md:grid-cols-3">
@@ -34,6 +34,7 @@ export function SiteChrome({
             <Link href="/menu" className="nav-link nav-link-dark">Menu</Link>
             <Link href="/visit" className="nav-link nav-link-dark">Visit</Link>
             <Link href="/events" className="nav-link nav-link-dark">Book an event</Link>
+            <Link href="/reviews" className="nav-link nav-link-dark">Reviews</Link>
             <a href={settings.instagramUrl} target="_blank" rel="noreferrer" className="nav-link nav-link-dark">Instagram</a>
             <Link href="/privacy" className="nav-link nav-link-dark">Privacy</Link>
           </div>
@@ -41,31 +42,5 @@ export function SiteChrome({
       </footer>
       <BackToTop />
     </div>
-  );
-}
-
-function LightHeader() {
-  const links = [
-    { href: "/menu", label: "Menu" },
-    { href: "/about", label: "About" },
-    { href: "/gallery", label: "Gallery" },
-    { href: "/events", label: "Events" },
-    { href: "/visit", label: "Visit" },
-  ];
-  return (
-    <header className="border-b border-line bg-cream">
-      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-5 py-5 sm:px-8 md:flex-row md:items-center md:justify-between">
-        <Link href="/">
-          <Wordmark size="sm" />
-        </Link>
-        <nav className="flex flex-wrap items-center gap-x-6 gap-y-2">
-          {links.map((link) => (
-            <Link key={link.href} href={link.href} className="nav-link nav-link-light">
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-      </div>
-    </header>
   );
 }

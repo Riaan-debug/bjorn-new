@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { HubShell } from "@/components/hub/HubShell";
 import type { Customer, StaffRole } from "@/lib/types";
 import { prettyDate } from "@/lib/format";
+import { toast } from "@/lib/toast";
 
 export default function LoyaltyPage() {
   const [list, setList] = useState<Customer[]>([]);
@@ -37,13 +38,18 @@ export default function LoyaltyPage() {
 
   async function add(e: React.FormEvent) {
     e.preventDefault();
-    await fetch("/api/hub/customers", {
+    const res = await fetch("/api/hub/customers", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ name, phone }),
     });
+    if (!res.ok) {
+      toast("Could not add this customer", "error");
+      return;
+    }
     setName("");
     setPhone("");
+    toast("Added");
     load();
   }
 
@@ -53,6 +59,7 @@ export default function LoyaltyPage() {
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ stampsDelta: delta }),
     });
+    toast(delta > 0 ? "Stamp added" : "Stamp removed");
     load();
   }
 
@@ -62,6 +69,7 @@ export default function LoyaltyPage() {
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ redeemFree: true }),
     });
+    toast("Free drink redeemed");
     load();
   }
 
@@ -76,13 +84,18 @@ export default function LoyaltyPage() {
     e.preventDefault();
     if (!editing) return;
     setBusy(true);
-    await fetch(`/api/hub/customers/${editing.id}`, {
+    const res = await fetch(`/api/hub/customers/${editing.id}`, {
       method: "PATCH",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ name: editName, phone: editPhone, notes: editNotes }),
     });
     setBusy(false);
+    if (!res.ok) {
+      toast("Could not save", "error");
+      return;
+    }
     setEditing(null);
+    toast("Saved");
     load();
   }
 
@@ -90,9 +103,14 @@ export default function LoyaltyPage() {
     if (!editing) return;
     if (!window.confirm(`Delete ${editing.name}? This cannot be undone.`)) return;
     setBusy(true);
-    await fetch(`/api/hub/customers/${editing.id}`, { method: "DELETE" });
+    const res = await fetch(`/api/hub/customers/${editing.id}`, { method: "DELETE" });
     setBusy(false);
+    if (!res.ok) {
+      toast("Could not delete", "error");
+      return;
+    }
     setEditing(null);
+    toast("Deleted");
     load();
   }
 

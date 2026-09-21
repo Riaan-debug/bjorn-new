@@ -23,6 +23,56 @@
 
 html { scroll-behavior: smooth; }
 
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+.pinboard {
+  display: grid;
+  gap: 1.75rem;
+  align-items: start;
+}
+
+@media (min-width: 640px) {
+  .pinboard {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pinboard-card:nth-child(even) {
+    margin-top: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .pinboard {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2rem 1.5rem;
+  }
+
+  .pinboard-card:nth-child(even) {
+    margin-top: 0;
+  }
+
+  .pinboard-card:nth-child(3n+2) {
+    margin-top: 1.6rem;
+  }
+
+  .pinboard-card:nth-child(3n) {
+    margin-top: 0.7rem;
+  }
+}
+
+.pinboard-card {
+  transform: rotate(var(--tilt, 0deg));
+  box-shadow: 0 10px 24px rgba(1, 27, 61, 0.06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pinboard-card {
+    transform: none;
+  }
+}
+
 body {
   background: var(--cream);
   color: var(--ink);
@@ -73,6 +123,36 @@ h1, h2, h3, h4, .font-display {
     linear-gradient(160deg, #011b3d 0%, #0a2a55 55%, #011226 100%);
 }
 
+.bean-drift {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.bean-drift-item {
+  position: absolute;
+  color: rgba(255, 253, 245, 0.22);
+  animation: bean-drift var(--dur, 32s) ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes bean-drift {
+  from {
+    transform: translate3d(0, 0, 0) rotate(var(--from, 0deg));
+  }
+  to {
+    transform: translate3d(var(--dx, 12px), var(--dy, -20px), 0) rotate(var(--to, 12deg));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bean-drift {
+    display: none;
+  }
+}
+
 input, textarea, select, button { font: inherit; }
 
 .table-wrap { overflow-x: auto; }
@@ -90,11 +170,17 @@ th, td {
 }
 
 th {
+  background: var(--navy);
+  color: var(--cream);
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--mist);
   font-weight: 600;
+  border-bottom: none;
+}
+
+tr.low td {
+  background: rgba(127, 29, 29, 0.08);
 }
 
 .nav-link {

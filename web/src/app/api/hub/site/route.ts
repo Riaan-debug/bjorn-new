@@ -12,6 +12,17 @@ const schema = z.object({
     imagePath: z.string().max(200),
   }),
   photos: z.record(z.string(), z.string().max(200)),
+  team: z.array(z.object({
+    id: z.string().max(40),
+    name: z.string().max(40),
+    role: z.string().max(40),
+    imagePath: z.string().max(200),
+  })).max(12).optional(),
+  reviews: z.array(z.object({
+    id: z.string().max(40),
+    quote: z.string().max(400),
+    name: z.string().max(80),
+  })).max(12).optional(),
 });
 
 export async function GET() {
@@ -29,7 +40,12 @@ export async function POST(request: Request) {
     const blocked = guardWrite(request, "hub-site", 30, 60 * 1000);
     if (blocked) return blocked;
     const body = schema.parse(await request.json());
-    const next = mergeSite(body);
+    const current = store.site();
+    const next = mergeSite({
+      ...body,
+      team: body.team ?? current.team,
+      reviews: body.reviews ?? current.reviews,
+    });
     store.saveSite(next);
     return json(next);
   } catch (error) {
