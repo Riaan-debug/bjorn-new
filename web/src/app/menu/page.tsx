@@ -31,7 +31,7 @@ export default function MenuPage() {
           <div className="grid md:grid-cols-2 md:divide-x md:divide-cream/20">
             <BoardColumn title="Drinks" items={drinks} />
             <div className="border-t border-cream/20 md:hidden" />
-            <BoardColumn title="Food" items={food} />
+            <BoardColumn title="Food" items={food} showDescriptions />
           </div>
           {special ? (
             <div className="flex items-center gap-5 border-t border-cream/20 px-6 py-7 sm:px-10">
@@ -55,9 +55,11 @@ export default function MenuPage() {
 function BoardColumn({
   title,
   items,
+  showDescriptions = false,
 }: {
   title: string;
   items: ReturnType<typeof publicMenu>;
+  showDescriptions?: boolean;
 }) {
   const cats = [...new Set(items.map((i) => i.cat))];
   return (
@@ -82,6 +84,9 @@ function BoardColumn({
                         <span className="shrink-0 text-[13px] text-cream/75">{zar(item.sizes[0].price)}</span>
                       ) : null}
                     </div>
+                    {showDescriptions && item.description ? (
+                      <p className="mt-1 text-[13px] leading-5 text-cream/60">{item.description}</p>
+                    ) : null}
                     {item.sizes.length > 1 ? (
                       <p className="mt-1 text-[12px] leading-5 text-cream/55">{boardPrice(item.sizes)}</p>
                     ) : null}

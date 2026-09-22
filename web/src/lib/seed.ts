@@ -23,143 +23,67 @@ export const DEFAULT_SETTINGS: Settings = {
   seeded: true,
 };
 
+const S = (price: number) => ({ sz: "S", label: "Short", price });
+const T = (price: number) => ({ sz: "T", label: "Tall", price });
+const G = (price: number) => ({ sz: "G", label: "Grande", price });
+const R = (price: number) => ({ sz: "R", label: "Regular", price });
+const L = (price: number) => ({ sz: "L", label: "Large", price });
+
 export const MENU_SEED: MenuItem[] = [
-  {
-    id: "d1", name: "Espresso", kind: "drink", cat: "Espresso", active: true, featured: true,
-    description: "Our house blend, pulled short and sweet.", imagePath: "",
-    sizes: [{ sz: "S", label: "Single", price: 25 }, { sz: "M", label: "Double", price: 32 }],
-  },
-  {
-    id: "d2", name: "Americano", kind: "drink", cat: "Espresso", active: true, featured: false,
-    description: "Espresso stretched with hot water.", imagePath: "",
-    sizes: [
-      { sz: "S", label: "Small", price: 30 },
-      { sz: "M", label: "Medium", price: 35 },
-      { sz: "L", label: "Large", price: 40 },
-    ],
-  },
-  {
-    id: "d3", name: "Cappuccino", kind: "drink", cat: "Milk-based", active: true, featured: true,
-    description: "Equal parts espresso, steamed milk and silk foam.", imagePath: "",
-    sizes: [
-      { sz: "S", label: "Small 8oz", price: 35 },
-      { sz: "M", label: "Medium 12oz", price: 40 },
-      { sz: "L", label: "Large 16oz", price: 46 },
-    ],
-  },
-  {
-    id: "d4", name: "Latte", kind: "drink", cat: "Milk-based", active: true, featured: true,
-    description: "Longer, softer, still built on a proper shot.", imagePath: "",
-    sizes: [
-      { sz: "S", label: "Small 8oz", price: 36 },
-      { sz: "M", label: "Medium 12oz", price: 42 },
-      { sz: "L", label: "Large 16oz", price: 48 },
-    ],
-  },
-  {
-    id: "d5", name: "Flat White", kind: "drink", cat: "Milk-based", active: true, featured: false,
-    description: "Velvet microfoam over a double shot.", imagePath: "",
-    sizes: [{ sz: "M", label: "Standard", price: 38 }],
-  },
-  {
-    id: "d6", name: "Mocha", kind: "drink", cat: "Speciality", active: true, featured: false,
-    description: "Espresso, chocolate and steamed milk.", imagePath: "",
-    sizes: [
-      { sz: "S", label: "Small 8oz", price: 40 },
-      { sz: "M", label: "Medium 12oz", price: 46 },
-      { sz: "L", label: "Large 16oz", price: 52 },
-    ],
-  },
-  {
-    id: "d7", name: "Hot Chocolate", kind: "drink", cat: "Speciality", active: true, featured: false,
-    description: "Rich cocoa, steamed milk, no espresso.", imagePath: "",
-    sizes: [
-      { sz: "S", label: "Small 8oz", price: 38 },
-      { sz: "M", label: "Medium 12oz", price: 44 },
-      { sz: "L", label: "Large 16oz", price: 50 },
-    ],
-  },
-  {
-    id: "d8", name: "Cold Brew", kind: "drink", cat: "Cold", active: true, featured: true,
-    description: "Steeped slow, served over ice.", imagePath: "",
-    sizes: [
-      { sz: "M", label: "Regular", price: 45 },
-      { sz: "L", label: "Large", price: 52 },
-    ],
-  },
-  {
-    id: "d9", name: "Iced Latte", kind: "drink", cat: "Cold", active: true, featured: false,
-    description: "Espresso, cold milk, ice.", imagePath: "",
-    sizes: [
-      { sz: "M", label: "Regular", price: 44 },
-      { sz: "L", label: "Large", price: 50 },
-    ],
-  },
-  {
-    id: "d10", name: "Strawberry Shake", kind: "drink", cat: "Shakes", active: true, featured: true,
-    description: "As seen on the Apostellō cup — thick, cold, pink.", imagePath: "",
-    sizes: [{ sz: "M", label: "Regular", price: 48 }],
-  },
-  {
-    id: "d11", name: "Vanilla Shake", kind: "drink", cat: "Shakes", active: true, featured: false,
-    description: "Creamy vanilla, built to travel.", imagePath: "",
-    sizes: [{ sz: "M", label: "Regular", price: 46 }],
-  },
-  {
-    id: "f1", name: "Classic Smash", kind: "food", cat: "Smash burgers", active: true, featured: true,
-    description: "Single smash, American cheese, pickles, house sauce, toasted bun.", imagePath: "",
-    sizes: [{ sz: "S", label: "Single", price: 89 }],
-  },
-  {
-    id: "f2", name: "Double Smash", kind: "food", cat: "Smash burgers", active: true, featured: true,
-    description: "Two thin patties, double cheese, pickle crunch.", imagePath: "",
-    sizes: [{ sz: "M", label: "Double", price: 115 }],
-  },
-  {
-    id: "f3", name: "The Sent", kind: "food", cat: "Smash burgers", active: true, featured: true,
-    description: "Signature smash — cheddar, caramelised onion, Apostellō sauce.", imagePath: "",
-    sizes: [{ sz: "M", label: "Signature", price: 119 }],
-  },
-  {
-    id: "f4", name: "Bacon Smash", kind: "food", cat: "Smash burgers", active: true, featured: false,
-    description: "Crisp bacon, cheese smash, sticky sauce.", imagePath: "",
-    sizes: [{ sz: "M", label: "Bacon", price: 125 }],
-  },
-  {
-    id: "f5", name: "Kids Smash", kind: "food", cat: "Smash burgers", active: true, featured: false,
-    description: "Smaller patty, cheese, no heat. Comes with fries.", imagePath: "",
-    sizes: [{ sz: "S", label: "Kids", price: 65 }],
-  },
-  {
-    id: "f6", name: "Skinny Fries", kind: "food", cat: "Sides", active: true, featured: false,
-    description: "Salted, crisp, ready for the burger.", imagePath: "",
-    sizes: [{ sz: "M", label: "Portion", price: 35 }],
-  },
-  {
-    id: "f7", name: "Loaded Fries", kind: "food", cat: "Sides", active: true, featured: false,
-    description: "Cheese, smash sauce, spring onion.", imagePath: "",
-    sizes: [{ sz: "M", label: "Portion", price: 68 }],
-  },
-  {
-    id: "f8", name: "Butter Croissant", kind: "food", cat: "Bakery", active: true, featured: true,
-    description: "Flaky, baked for the morning rush.", imagePath: "",
-    sizes: [{ sz: "S", label: "Each", price: 32 }],
-  },
-  {
-    id: "f9", name: "Banana Bread", kind: "food", cat: "Bakery", active: true, featured: false,
-    description: "Thick slice, best with a flat white.", imagePath: "",
-    sizes: [{ sz: "S", label: "Slice", price: 38 }],
-  },
-  {
-    id: "f10", name: "Muffin of the day", kind: "food", cat: "Bakery", active: true, featured: false,
-    description: "Ask the bar — it changes with the bake.", imagePath: "",
-    sizes: [{ sz: "S", label: "Each", price: 34 }],
-  },
-  {
-    id: "f11", name: "Spring Cookie", kind: "food", cat: "Bakery", active: true, featured: false,
-    description: "House cookie — the one from the Instagram drop.", imagePath: "",
-    sizes: [{ sz: "S", label: "Each", price: 22 }],
-  },
+  { id: "d1", name: "Americano", kind: "drink", cat: "Espresso drinks", active: true, featured: false, description: "Red espresso available.", imagePath: "", sizes: [S(34), T(39), G(44)] },
+  { id: "d2", name: "Cappuccino", kind: "drink", cat: "Espresso drinks", active: true, featured: true, description: "Red espresso available.", imagePath: "", sizes: [S(37), T(46), G(54)] },
+  { id: "d3", name: "Flat White", kind: "drink", cat: "Espresso drinks", active: true, featured: false, description: "Red espresso available.", imagePath: "", sizes: [S(42), T(50), G(58)] },
+  { id: "d4", name: "Caffè Mocha", kind: "drink", cat: "Espresso drinks", active: true, featured: false, description: "Red espresso available.", imagePath: "", sizes: [S(40), T(50), G(60)] },
+  { id: "d5", name: "Caffè Latte", kind: "drink", cat: "Espresso drinks", active: true, featured: true, description: "Red espresso available.", imagePath: "", sizes: [T(40), G(48)] },
+  { id: "d6", name: "Doppio Espresso", kind: "drink", cat: "Espresso drinks", active: true, featured: false, description: "Red espresso available.", imagePath: "", sizes: [S(32)] },
+  { id: "d7", name: "Macchiato", kind: "drink", cat: "Espresso drinks", active: true, featured: false, description: "Red espresso available.", imagePath: "", sizes: [S(33)] },
+  { id: "d8", name: "Cortado", kind: "drink", cat: "Espresso drinks", active: true, featured: false, description: "Red espresso available.", imagePath: "", sizes: [S(35)] },
+  { id: "d9", name: "Piccolo", kind: "drink", cat: "Espresso drinks", active: true, featured: false, description: "Red espresso available.", imagePath: "", sizes: [S(34)] },
+  { id: "d10", name: "Café Bonbon", kind: "drink", cat: "Espresso drinks", active: true, featured: false, description: "Red espresso available.", imagePath: "", sizes: [S(35)] },
+  { id: "d11", name: "Caramel Latte", kind: "drink", cat: "Flavoured drinks", active: true, featured: false, description: "Made with flavoured powder.", imagePath: "", sizes: [S(37), T(47), G(57)] },
+  { id: "d12", name: "Hazelnut Latte", kind: "drink", cat: "Flavoured drinks", active: true, featured: false, description: "Made with flavoured powder.", imagePath: "", sizes: [S(37), T(47), G(57)] },
+  { id: "d13", name: "Vanilla Latte", kind: "drink", cat: "Flavoured drinks", active: true, featured: false, description: "Made with flavoured powder.", imagePath: "", sizes: [S(37), T(47), G(57)] },
+  { id: "d14", name: "Butterscotch Latte", kind: "drink", cat: "Flavoured drinks", active: true, featured: false, description: "Made with flavoured powder.", imagePath: "", sizes: [S(37), T(47), G(57)] },
+  { id: "d15", name: "Hot Chocolate White", kind: "drink", cat: "Flavoured drinks", active: true, featured: false, description: "Made with flavoured powder.", imagePath: "", sizes: [S(37), T(47), G(57)] },
+  { id: "d16", name: "Hot Chocolate", kind: "drink", cat: "Flavoured drinks", active: true, featured: false, description: "Made with flavoured powder.", imagePath: "", sizes: [S(37), T(47), G(57)] },
+  { id: "d17", name: "Belgium Chocolate", kind: "drink", cat: "Flavoured drinks", active: true, featured: false, description: "Made with flavoured powder.", imagePath: "", sizes: [S(43), T(53), G(63)] },
+  { id: "d18", name: "Milk alternative", kind: "drink", cat: "Extras", active: true, featured: false, description: "Oat or almond.", imagePath: "", sizes: [{ sz: "X", label: "Add", price: 10 }] },
+  { id: "d19", name: "Extra espresso", kind: "drink", cat: "Extras", active: true, featured: false, description: "", imagePath: "", sizes: [{ sz: "X", label: "Add", price: 8 }] },
+  { id: "d20", name: "Syrup", kind: "drink", cat: "Extras", active: true, featured: false, description: "Limited.", imagePath: "", sizes: [{ sz: "X", label: "Add", price: 5 }] },
+  { id: "d21", name: "Flavoured powder", kind: "drink", cat: "Extras", active: true, featured: false, description: "", imagePath: "", sizes: [{ sz: "X", label: "Add", price: 5 }] },
+  { id: "d22", name: "Coffee Frappe", kind: "drink", cat: "Flavoured frappes", active: true, featured: true, description: "Blended ice.", imagePath: "", sizes: [R(49), L(57)] },
+  { id: "d23", name: "Chai Frappe", kind: "drink", cat: "Flavoured frappes", active: true, featured: false, description: "Blended ice.", imagePath: "", sizes: [R(43), L(53)] },
+  { id: "d24", name: "Caramel Frappe", kind: "drink", cat: "Flavoured frappes", active: true, featured: false, description: "Blended ice.", imagePath: "", sizes: [R(43), L(53)] },
+  { id: "d25", name: "Chocolate Frappe", kind: "drink", cat: "Flavoured frappes", active: true, featured: false, description: "Blended ice.", imagePath: "", sizes: [R(43), L(53)] },
+  { id: "d26", name: "White Chocolate Frappe", kind: "drink", cat: "Flavoured frappes", active: true, featured: false, description: "Blended ice.", imagePath: "", sizes: [R(43), L(53)] },
+  { id: "d27", name: "Mocha Frappe", kind: "drink", cat: "Flavoured frappes", active: true, featured: false, description: "Blended ice.", imagePath: "", sizes: [R(52), L(60)] },
+  { id: "d28", name: "Fruit Frappe", kind: "drink", cat: "Flavoured frappes", active: true, featured: false, description: "Ask for availability.", imagePath: "", sizes: [R(45), L(55)] },
+  { id: "d29", name: "Iced Coffee", kind: "drink", cat: "Iced drinks", active: true, featured: false, description: "Whole ice cubes.", imagePath: "", sizes: [R(41), L(50)] },
+  { id: "d30", name: "Flavoured Iced Coffee", kind: "drink", cat: "Iced drinks", active: true, featured: false, description: "Whole ice cubes.", imagePath: "", sizes: [R(47), L(57)] },
+  { id: "d32", name: "Iced Americano", kind: "drink", cat: "Iced drinks", active: true, featured: false, description: "Whole ice cubes.", imagePath: "", sizes: [R(33), L(39)] },
+  { id: "d33", name: "Iced Mocha", kind: "drink", cat: "Iced drinks", active: true, featured: false, description: "Whole ice cubes.", imagePath: "", sizes: [R(49), L(60)] },
+  { id: "d34", name: "Iced Latte", kind: "drink", cat: "Iced drinks", active: true, featured: true, description: "Whole ice cubes.", imagePath: "", sizes: [R(45), L(55)] },
+  { id: "d35", name: "Iced Chai", kind: "drink", cat: "Iced drinks", active: true, featured: false, description: "Whole ice cubes.", imagePath: "", sizes: [R(45), L(55)] },
+  { id: "f1", name: "The Cheeseburger", kind: "food", cat: "Burgers", active: true, featured: true, description: "125g smash burger with melted cheese, ketchup, mustard, chopped onion, lettuce and tomato.", imagePath: "", sizes: [{ sz: "S", label: "Each", price: 65 }] },
+  { id: "f2", name: "The Double Smash", kind: "food", cat: "Burgers", active: true, featured: true, description: "Two 125g smash burgers with melted cheese, ketchup, mustard, chopped onion, lettuce and tomato.", imagePath: "", sizes: [{ sz: "M", label: "Each", price: 85 }] },
+  { id: "f3", name: "The Spicy Smash", kind: "food", cat: "Burgers", active: true, featured: true, description: "150g smash burger with melted cheese, ketchup, mustard, chopped onion, lettuce, tomato, jalapeño and spicy honey ranch.", imagePath: "", sizes: [{ sz: "M", label: "Each", price: 75 }] },
+  { id: "f4", name: "The Classic", kind: "food", cat: "Hotdogs", active: true, featured: false, description: "Hotdog bun with our signature sausage, topped with ketchup and mustard.", imagePath: "", sizes: [{ sz: "S", label: "Each", price: 40 }] },
+  { id: "f5", name: "The Spicy", kind: "food", cat: "Hotdogs", active: true, featured: false, description: "Hotdog bun with our signature sausage, topped with jalapeño and spicy honey ranch.", imagePath: "", sizes: [{ sz: "S", label: "Each", price: 50 }] },
+  { id: "f6", name: "The Honeymoon", kind: "food", cat: "Hotdogs", active: true, featured: false, description: "Hotdog bun with our signature sausage, topped with jalapeño and spicy honey ranch.", imagePath: "", sizes: [{ sz: "S", label: "Each", price: 50 }] },
+  { id: "f7", name: "Apostellō French Fries", kind: "food", cat: "Extras / sides", active: true, featured: true, description: "", imagePath: "", sizes: [{ sz: "S", label: "Portion", price: 30 }] },
+  { id: "f8", name: "Brownies", kind: "food", cat: "Extras / sides", active: true, featured: false, description: "", imagePath: "", sizes: [{ sz: "S", label: "Each", price: 20 }] },
+  { id: "f9", name: "Extra Cheese", kind: "food", cat: "Extras / sides", active: true, featured: false, description: "", imagePath: "", sizes: [{ sz: "X", label: "Add", price: 8 }] },
+  { id: "f10", name: "Extra Patty", kind: "food", cat: "Extras / sides", active: true, featured: false, description: "", imagePath: "", sizes: [{ sz: "X", label: "Add", price: 20 }] },
+  { id: "f11", name: "Extra Ham", kind: "food", cat: "Extras / sides", active: true, featured: false, description: "", imagePath: "", sizes: [{ sz: "X", label: "Add", price: 10 }] },
+  { id: "f12", name: "Extra Jalapeño", kind: "food", cat: "Extras / sides", active: true, featured: false, description: "", imagePath: "", sizes: [{ sz: "X", label: "Add", price: 8 }] },
+  { id: "f13", name: "Extra Espresso", kind: "food", cat: "Extras / sides", active: true, featured: false, description: "", imagePath: "", sizes: [{ sz: "X", label: "Add", price: 8 }] },
+  { id: "f14", name: "Still Oasis Water (500ml)", kind: "food", cat: "Extras / sides", active: true, featured: false, description: "", imagePath: "", sizes: [{ sz: "S", label: "Bottle", price: 17 }] },
+  { id: "f15", name: "Muffin", kind: "food", cat: "Extras / sides", active: true, featured: false, description: "", imagePath: "", sizes: [{ sz: "S", label: "Each", price: 20 }] },
+  { id: "f16", name: "Cooldrinks (small)", kind: "food", cat: "Extras / sides", active: true, featured: false, description: "", imagePath: "", sizes: [{ sz: "S", label: "Each", price: 15 }] },
+  { id: "f17", name: "The Cheese", kind: "food", cat: "Toasties", active: true, featured: false, description: "Toasted cheese sandwich. Hotdog or burger bun.", imagePath: "", sizes: [{ sz: "S", label: "Each", price: 40 }] },
+  { id: "f18", name: "The Cheese and Tomato", kind: "food", cat: "Toasties", active: true, featured: false, description: "Toasted cheese and tomato sandwich, seasoned with a touch of pepper. Hotdog or burger bun.", imagePath: "", sizes: [{ sz: "S", label: "Each", price: 45 }] },
+  { id: "f19", name: "The Ham, Cheese and Tomato", kind: "food", cat: "Toasties", active: true, featured: false, description: "Toasted ham, cheese and tomato sandwich, seasoned with a touch of pepper. Hotdog or burger bun.", imagePath: "", sizes: [{ sz: "S", label: "Each", price: 50 }] },
+  { id: "f20", name: "The Loaded", kind: "food", cat: "Toasties", active: true, featured: true, description: "Toasted ham, cheese, tomato, onion and jalapeño, seasoned with a touch of pepper. Hotdog or burger bun.", imagePath: "", sizes: [{ sz: "S", label: "Each", price: 60 }] },
 ];
 
 export const STOCK_SEED: StockItem[] = [

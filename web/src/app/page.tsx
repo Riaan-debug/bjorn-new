@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { BeanDrift } from "@/components/site/BeanDrift";
+import { HeroFilm } from "@/components/site/HeroFilm";
 import { SiteChrome } from "@/components/site/SiteChrome";
 import { SiteImage } from "@/components/site/SiteImage";
-import { Wordmark } from "@/components/site/Wordmark";
 import { publicMenu, publicSettings, publicSite } from "@/lib/db";
 import { priceRange } from "@/lib/format";
 
@@ -21,49 +21,22 @@ export default function HomePage() {
     <SiteChrome darkHero>
       <section className="relative min-h-[92vh] overflow-hidden text-cream">
         <div className="absolute inset-0 hero-fallback" />
-        <video
-          className="absolute inset-0 h-full w-full object-cover"
-          autoPlay
-          muted
-          loop
-          playsInline
-          poster="/media/hero-poster.jpg"
-        >
-          <source src="/media/hero.mp4" type="video/mp4" />
-        </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-navy/20 via-navy/35 to-navy" />
+        <HeroFilm location={settings.location} tradingHours={settings.tradingHours} />
         <BeanDrift />
-        <div className="relative z-10 mx-auto flex min-h-[92vh] max-w-6xl flex-col justify-end px-5 pb-20 pt-32 sm:px-8">
-          <p className="mb-6 text-[12px] font-medium uppercase tracking-[0.22em] text-white">
-            Speciality coffee · Smash burgers · Est. 26
+      </section>
+
+      <section className="border-b border-line bg-cream">
+        <div className="mx-auto flex max-w-6xl items-center gap-6 px-5 py-8 sm:px-8 sm:py-10">
+          <p className="max-w-3xl flex-1 font-display text-3xl font-light leading-snug text-navy sm:text-5xl">
+            {settings.slogan}
           </p>
-          <Wordmark invert size="lg" />
-          <p className="mt-8 text-[15px] leading-7 tracking-[0.01em] text-white sm:text-lg">
-            {settings.location}
-          </p>
-          <p className="mt-1 text-[15px] leading-7 tracking-[0.01em] text-white sm:text-lg">
-            {settings.tradingHours}
-          </p>
-          <div className="mt-10 flex flex-wrap gap-4">
-            <Link href="/menu" className="btn-cream px-7 py-3.5 text-[13px] font-semibold uppercase tracking-[0.16em]">
-              View menu
-            </Link>
-            <Link href="/visit" className="btn-ghost px-7 py-3.5 text-[13px] font-semibold uppercase tracking-[0.16em]">
-              Find us
-            </Link>
+          <div className="bean-stage relative h-20 w-24 shrink-0 sm:h-28 sm:w-36">
+            <BeanDrift preset="slogan" tone="navy" />
           </div>
         </div>
       </section>
 
-      <section className="border-b border-line bg-cream">
-        <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-10">
-          <p className="max-w-3xl font-display text-3xl font-light leading-snug text-navy sm:text-5xl">
-            {settings.slogan}
-          </p>
-        </div>
-      </section>
-
-      <SiteImage src={photos.homeStory} label="Café / trailer still" ratio="aspect-[16/9]" className="min-h-[420px] w-full" />
+      <SiteImage src={photos.homeStory} label="Café / trailer still" ratio="aspect-[16/9]" className="min-h-[420px] w-full" drift="stillWide" />
 
       {special ? (
         <section className="border-b border-line">
@@ -81,27 +54,33 @@ export default function HomePage() {
         </section>
       ) : null}
 
-      <section className="mx-auto max-w-6xl px-5 py-16 sm:px-8">
-        <p className="text-[11px] uppercase tracking-[0.28em] text-mist">The cup</p>
-        <h2 className="mt-3 max-w-xl font-display text-4xl font-light text-navy">Sent, not just served.</h2>
-        <p className="mt-5 max-w-xl text-base leading-8 text-mist">
-          Apostellō is the Greek for “to send”. Every shot is a Guatemala Hills and Brazil Peaberry blend,
-          pulled at 1:2.4 for 28–32 seconds, then handed over like it matters.
-        </p>
-        <p className="mt-4 text-sm text-navy">{settings.coffeeBlend}</p>
-        <Link href="/about" className="mt-8 inline-block text-[12px] uppercase tracking-[0.22em] text-navy underline underline-offset-4">
-          The story
-        </Link>
+      <section className="mx-auto grid max-w-6xl items-center gap-6 px-5 py-16 sm:px-8 md:grid-cols-[minmax(0,36rem)_1fr] md:gap-10">
+        <div>
+          <p className="text-[11px] uppercase tracking-[0.28em] text-mist">The cup</p>
+          <h2 className="mt-3 max-w-xl font-display text-4xl font-light text-navy">Sent, not just served.</h2>
+          <p className="mt-5 max-w-xl text-base leading-8 text-mist">
+            Apostellō is the Greek for “to send”. Every shot is a Guatemala Hills and Brazil Peaberry blend,
+            pulled at 1:2.4 for 28–32 seconds, then handed over like it matters.
+          </p>
+          <p className="mt-4 text-sm text-navy">{settings.coffeeBlend}</p>
+          <Link href="/about" className="mt-8 inline-block text-[12px] uppercase tracking-[0.22em] text-navy underline underline-offset-4">
+            The story
+          </Link>
+        </div>
+        <div className="bean-stage relative h-36 md:h-72">
+          <BeanDrift preset="story" tone="navy" />
+        </div>
       </section>
 
       <section className="grid gap-3 px-5 sm:px-8 md:grid-cols-3 md:px-0">
-        <SiteImage src={photos.homeSmash} label="Smash burger still" className="min-h-[320px]" />
-        <SiteImage src={photos.homePour} label="Espresso / pour" className="min-h-[320px]" />
-        <SiteImage src={photos.homeCounter} label="Olympus counter" className="min-h-[320px]" />
+        <SiteImage src={photos.homeSmash} label="Smash burger still" className="min-h-[320px]" drift="stillSmash" />
+        <SiteImage src={photos.homePour} label="Espresso / pour" className="min-h-[320px]" drift="stillPour" />
+        <SiteImage src={photos.homeCounter} label="Olympus counter" className="min-h-[320px]" drift="stillCounter" />
       </section>
 
-      <section className="bg-navy text-cream">
-        <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8">
+      <section className="relative overflow-hidden bg-navy text-cream">
+        <BeanDrift preset="gutter" tone="cream" className="hidden xl:block" />
+        <div className="relative z-10 mx-auto max-w-6xl px-5 py-16 sm:px-8">
           <div className="flex items-end justify-between gap-6">
             <div>
               <p className="text-[11px] uppercase tracking-[0.28em] text-cream/50">From the counter</p>
@@ -115,7 +94,10 @@ export default function HomePage() {
             <HomeColumn title="Drinks" items={drinks} className="md:pr-12" />
             <HomeColumn title="Food" items={food} className="md:pl-12" />
           </div>
-          <Link href="/menu" className="mt-10 inline-block text-[12px] uppercase tracking-[0.22em] text-cream/70 md:hidden">
+          <div className="bean-stage relative mt-12 h-28 md:mt-14">
+            <BeanDrift preset="counter" tone="cream" />
+          </div>
+          <Link href="/menu" className="mt-6 inline-block text-[12px] uppercase tracking-[0.22em] text-cream/70 md:hidden">
             Full menu
           </Link>
         </div>

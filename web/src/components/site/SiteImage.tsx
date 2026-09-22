@@ -1,3 +1,4 @@
+import type { BeanPreset } from "@/components/site/BeanDrift";
 import { MediaPlaceholder } from "@/components/site/MediaPlaceholder";
 
 export function SiteImage({
@@ -5,13 +6,15 @@ export function SiteImage({
   label,
   className = "",
   ratio = "aspect-[4/3]",
+  drift,
 }: {
   src?: string;
   label: string;
   className?: string;
   ratio?: string;
+  drift?: BeanPreset;
 }) {
-  if (!src) return <MediaPlaceholder label={label} className={className} ratio={ratio} />;
+  if (!src) return <MediaPlaceholder label={label} className={className} ratio={ratio} drift={drift} />;
   return (
     <div className={`relative overflow-hidden bg-line ${ratio} ${className}`}>
       {/* eslint-disable-next-line @next/next/no-img-element */}

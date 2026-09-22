@@ -1,7 +1,7 @@
 const SIZES = {
   sm: "h-7 w-auto",
   md: "h-10 w-auto",
-  lg: "h-[4.25rem] w-auto sm:h-24",
+  lg: "h-auto w-[min(40rem,calc(100vw-4.5rem))]",
 };
 
 export function Wordmark({
@@ -16,7 +16,7 @@ export function Wordmark({
   const color = invert ? "text-cream" : "text-navy";
 
   return (
-    <span className={`inline-flex flex-col ${lockup ? "items-center" : "items-start"} ${color}`}>
+    <span className={`inline-flex max-w-full flex-col ${lockup ? "items-center" : "items-start"} ${color}`}>
       <svg
         className={SIZES[size]}
         viewBox="168 648 1162 186"
