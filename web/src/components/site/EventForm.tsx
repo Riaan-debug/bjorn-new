@@ -1,17 +1,24 @@
 "use client";
 
+import { BookingDate } from "@/components/site/BookingDate";
 import { useState } from "react";
 
 export function EventForm() {
   const [status, setStatus] = useState<"idle" | "sending" | "ok" | "err">("idle");
   const [error, setError] = useState("");
+  const [eventDate, setEventDate] = useState("");
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formEl = e.currentTarget;
-    setStatus("sending");
     setError("");
     const form = new FormData(formEl);
+    if (!form.get("eventDate")) {
+      setError("Choose a date from tomorrow.");
+      setStatus("err");
+      return;
+    }
+    setStatus("sending");
     const res = await fetch("/api/public/contact", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -30,6 +37,7 @@ export function EventForm() {
     if (res.ok) {
       setStatus("ok");
       formEl.reset();
+      setEventDate("");
       return;
     }
     const data = await res.json().catch(() => ({}));
@@ -43,7 +51,7 @@ export function EventForm() {
       <Field name="email" label="Email" type="email" required />
       <Field name="phone" label="Phone" />
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field name="eventDate" label="Date" type="date" required />
+        <BookingDate value={eventDate} onChange={setEventDate} />
         <Field name="guests" label="How many guests" type="number" required min="1" />
       </div>
       <label className="flex items-start gap-3 text-sm leading-6 text-navy">

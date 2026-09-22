@@ -1,5 +1,7 @@
+import type { BeanPreset } from "@/components/site/BeanDrift";
 import { SiteChrome } from "@/components/site/SiteChrome";
 import { SiteImage } from "@/components/site/SiteImage";
+import { PortafilterSticker } from "@/components/site/Stickers";
 import { publicSettings, publicSite } from "@/lib/db";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -50,7 +52,10 @@ export default function AboutPage() {
           </div>
         </div>
         <div className="space-y-6">
-          <SiteImage src={aboutPhoto} label="Portrait / team / machine" className="min-h-[420px]" />
+          <div className="relative z-20">
+            <SiteImage src={aboutPhoto} label="Portrait / team / machine" className="min-h-[420px]" drift="about" />
+            <PortafilterSticker className="top-8 right-2 w-36 rotate-[12deg] sm:right-4 sm:w-44" />
+          </div>
           <div className="border border-line p-6">
             <p className="text-[11px] uppercase tracking-[0.22em] text-mist">Coffee spec</p>
             <p className="mt-3 font-display text-xl text-navy">{settings.coffeeBlend}</p>
@@ -64,9 +69,14 @@ export default function AboutPage() {
           <p className="text-[11px] uppercase tracking-[0.28em] text-mist">The counter</p>
           <h2 className="mt-3 font-display text-4xl font-light text-navy">Meet the team</h2>
           <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {team.map((person) => (
+            {team.map((person, index) => (
               <article key={person.id}>
-                <SiteImage src={person.imagePath} label={person.name} className="min-h-[280px]" />
+                <SiteImage
+                  src={person.imagePath}
+                  label={person.name}
+                  className="min-h-[280px]"
+                  drift={(["teamOne", "teamTwo"] satisfies BeanPreset[])[index % 2]}
+                />
                 <p className="mt-4 font-display text-2xl font-light text-navy">{person.name}</p>
                 {person.role ? <p className="mt-1 text-sm text-mist">{person.role}</p> : null}
               </article>

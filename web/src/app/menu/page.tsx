@@ -1,4 +1,6 @@
+import { BeanDrift } from "@/components/site/BeanDrift";
 import { SiteChrome } from "@/components/site/SiteChrome";
+import { BurgerSticker, CupSticker } from "@/components/site/Stickers";
 import { publicMenu, publicSite } from "@/lib/db";
 import { zar } from "@/lib/format";
 import type { Metadata } from "next";
@@ -27,8 +29,11 @@ export default function MenuPage() {
           Speciality coffee and smash burgers.
         </p>
 
-        <div className="mt-12 border border-navy bg-navy text-cream">
-          <div className="grid md:grid-cols-2 md:divide-x md:divide-cream/20">
+        <div className="relative z-20 mt-20 mb-16 border border-navy bg-navy text-cream">
+          <BeanDrift preset="menu" tone="cream" />
+          <CupSticker className="top-0 left-[8%] w-24 -translate-y-[62%] -rotate-8 sm:left-[12%] sm:w-28" />
+          <BurgerSticker className="right-[6%] bottom-0 w-32 translate-y-[48%] rotate-[7deg] sm:right-[10%] sm:w-36" />
+          <div className="relative z-10 grid md:grid-cols-2 md:divide-x md:divide-cream/20">
             <BoardColumn title="Drinks" items={drinks} />
             <div className="border-t border-cream/20 md:hidden" />
             <BoardColumn title="Food" items={food} showDescriptions />
@@ -63,7 +68,7 @@ function BoardColumn({
 }) {
   const cats = [...new Set(items.map((i) => i.cat))];
   return (
-    <section className="px-6 py-8 sm:px-10">
+    <section className="px-6 pt-14 pb-12 sm:px-10">
       <h2 className="text-center font-display text-2xl font-light">{title}</h2>
       {cats.map((cat) => (
         <div key={cat} className="mt-8">

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { asError, guardWrite, json, reject } from "@/lib/api";
 import { store } from "@/lib/db";
+import { isBookableEventDate } from "@/lib/dates";
 import { safeText, uid } from "@/lib/security";
 import type { Enquiry, EnquiryEvent } from "@/lib/types";
 
@@ -50,6 +51,9 @@ export async function POST(request: Request) {
 
     if (raw?.kind === "event") {
       const body = eventSchema.parse(raw);
+      if (!isBookableEventDate(body.eventDate)) {
+        return reject("Choose a date from tomorrow. Same-day bookings are not taken.");
+      }
       const event: EnquiryEvent = {
         date: safeText(body.eventDate, 40),
         guests: body.guests,

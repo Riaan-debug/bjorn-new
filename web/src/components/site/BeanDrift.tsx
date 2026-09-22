@@ -53,6 +53,28 @@ const PRESETS = {
     { left: "18%", top: "66%", size: 24 },
     { left: "68%", top: "72%", size: 18 },
   ],
+  about: [
+    { left: "8%", top: "16%", size: 30 },
+    { left: "18%", top: "64%", size: 18 },
+    { left: "62%", top: "72%", size: 34 },
+    { left: "78%", top: "46%", size: 16 },
+  ],
+  teamOne: [
+    { left: "10%", top: "14%", size: 24 },
+    { left: "66%", top: "68%", size: 30 },
+    { left: "18%", top: "72%", size: 14 },
+  ],
+  teamTwo: [
+    { left: "76%", top: "10%", size: 22 },
+    { left: "8%", top: "70%", size: 22 },
+    { left: "70%", top: "76%", size: 16 },
+  ],
+  menu: [
+    { left: "2.5%", top: "1.4%", size: 20 },
+    { right: "3%", top: "1.8%", size: 24 },
+    { left: "2%", top: "96.5%", size: 22 },
+    { right: "3.5%", top: "95.5%", size: 18 },
+  ],
   stillCounter: [
     { left: "14%", top: "16%", size: 20 },
     { left: "66%", top: "24%", size: 36 },
@@ -72,7 +94,7 @@ export function BeanDrift({
   tone?: "cream" | "navy";
   className?: string;
 }) {
-  const tight = preset === "slogan" || preset === "counter";
+  const tight = preset === "slogan" || preset === "counter" || preset === "menu";
   return (
     <div className={`bean-drift bean-drift-${tone} ${tight ? "bean-drift-tight" : ""} ${className}`} aria-hidden>
       {PRESETS[preset].map((bean, index) => (
