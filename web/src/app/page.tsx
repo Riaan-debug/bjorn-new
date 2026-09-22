@@ -3,6 +3,7 @@ import { BeanDrift } from "@/components/site/BeanDrift";
 import { HeroFilm } from "@/components/site/HeroFilm";
 import { SiteChrome } from "@/components/site/SiteChrome";
 import { SiteImage } from "@/components/site/SiteImage";
+import { BurgerSticker, CupSticker, PortafilterSticker } from "@/components/site/Stickers";
 import { publicMenu, publicSettings, publicSite } from "@/lib/db";
 import { priceRange } from "@/lib/format";
 
@@ -36,7 +37,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      <SiteImage src={photos.homeStory} label="Café / trailer still" ratio="aspect-[16/9]" className="min-h-[420px] w-full" drift="stillWide" />
+      <div className="relative z-20">
+        <SiteImage src={photos.homeStory} label="Café / trailer still" ratio="aspect-[16/9]" className="min-h-[420px] w-full" drift="stillWide" />
+        <CupSticker className="right-[8%] bottom-0 w-28 translate-y-[36%] rotate-[8deg] sm:w-36 md:right-[14%]" />
+      </div>
 
       {special ? (
         <section className="border-b border-line">
@@ -72,9 +76,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="grid gap-3 px-5 sm:px-8 md:grid-cols-3 md:px-0">
-        <SiteImage src={photos.homeSmash} label="Smash burger still" className="min-h-[320px]" drift="stillSmash" />
-        <SiteImage src={photos.homePour} label="Espresso / pour" className="min-h-[320px]" drift="stillPour" />
+      <section className="relative z-20 grid gap-3 px-5 sm:px-8 md:grid-cols-3 md:px-0">
+        <div className="relative">
+          <SiteImage src={photos.homeSmash} label="Smash burger still" className="min-h-[320px]" drift="stillSmash" />
+          <BurgerSticker className="bottom-4 left-2 w-36 translate-y-[22%] -rotate-6 sm:left-4 sm:w-40" />
+        </div>
+        <div className="relative">
+          <SiteImage src={photos.homePour} label="Espresso / pour" className="min-h-[320px]" drift="stillPour" />
+          <PortafilterSticker className="top-8 right-3 w-40 rotate-[12deg] sm:w-44" />
+        </div>
         <SiteImage src={photos.homeCounter} label="Olympus counter" className="min-h-[320px]" drift="stillCounter" />
       </section>
 

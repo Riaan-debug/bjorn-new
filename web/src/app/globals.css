@@ -123,6 +123,14 @@ h1, h2, h3, h4, .font-display {
     linear-gradient(160deg, #011b3d 0%, #0a2a55 55%, #011226 100%);
 }
 
+.sticker svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 10px 12px rgba(1, 27, 61, 0.16));
+}
+
 .bean-drift {
   position: absolute;
   inset: 0;
