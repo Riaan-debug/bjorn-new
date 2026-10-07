@@ -13,6 +13,7 @@ export async function GET() {
     const customers = store.customers();
     const low = store.stock().filter((s) => s.count <= s.reorder);
     const unread = store.enquiries().filter((e) => !e.read).length;
+    const openOrders = store.orders().filter((order) => order.status === "new" || order.status === "ready").length;
     const weekStart = (() => {
       const d = new Date();
       const day = d.getDay();
@@ -27,6 +28,7 @@ export async function GET() {
       members: customers.length,
       lowStock: low,
       unread,
+      openOrders,
       weekCups: week.reduce((a, e) => a + (e.cups || 0), 0),
       weekRevenue: week.reduce((a, e) => a + (e.revenue || 0), 0),
     });

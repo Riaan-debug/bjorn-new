@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Wordmark } from "./Wordmark";
 
@@ -8,7 +7,7 @@ const CLEAR_AT = 14.5;
 const CARD_AT = 15.6;
 const LOGO_HOLD_MS = 2400;
 
-export function HeroFilm({ location, tradingHours }: { location: string; tradingHours: string }) {
+export function HeroFilm() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [clearCopy, setClearCopy] = useState(false);
   const [showLogo, setShowLogo] = useState(false);
@@ -69,22 +68,6 @@ export function HeroFilm({ location, tradingHours }: { location: string; trading
           clearCopy ? "opacity-0" : "opacity-100"
         }`}
       />
-      <div
-        className={`relative z-10 mx-auto flex min-h-[92vh] max-w-6xl flex-col justify-end px-5 pb-20 pt-32 transition-opacity duration-700 sm:px-8 ${
-          clearCopy ? "pointer-events-none opacity-0" : "opacity-100"
-        }`}
-      >
-        <p className="text-[15px] leading-7 tracking-[0.01em] text-white sm:text-lg">{location}</p>
-        <p className="mt-1 text-[15px] leading-7 tracking-[0.01em] text-white sm:text-lg">{tradingHours}</p>
-        <div className="mt-10 flex flex-wrap gap-4">
-          <Link href="/menu" className="btn-cream px-7 py-3.5 text-[13px] font-semibold uppercase tracking-[0.16em]">
-            View menu
-          </Link>
-          <Link href="/visit" className="btn-ghost px-7 py-3.5 text-[13px] font-semibold uppercase tracking-[0.16em]">
-            Find us
-          </Link>
-        </div>
-      </div>
       <div
         className={`absolute inset-0 z-20 flex items-center justify-center bg-navy transition-opacity duration-700 ${
           showLogo ? "opacity-100" : "pointer-events-none opacity-0"

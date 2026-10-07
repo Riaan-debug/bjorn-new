@@ -16,13 +16,14 @@ const empty: MenuItem = {
   active: true,
   featured: false,
   imagePath: "",
+  behindPath: "",
   sizes: [{ sz: "M", label: "Regular", price: 0 }],
 };
 
 export default function HubMenuPage() {
   const [items, setItems] = useState<MenuItem[]>([]);
   const [edit, setEdit] = useState<MenuItem | null>(null);
-  const [dragOver, setDragOver] = useState(false);
+  const [dragOver, setDragOver] = useState<"front" | "behind" | "">("");
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [q, setQ] = useState("");
@@ -66,7 +67,7 @@ export default function HubMenuPage() {
     load();
   }
 
-  async function uploadPhoto(file: File) {
+  async function uploadPhoto(file: File, slot: "front" | "behind") {
     setUploadError("");
     setUploading(true);
     const body = new FormData();
@@ -78,7 +79,8 @@ export default function HubMenuPage() {
       setUploadError(data.error || "Could not upload that photo");
       return;
     }
-    setEdit((current) => (current ? { ...current, imagePath: data.path } : current));
+    const key = slot === "front" ? "imagePath" : "behindPath";
+    setEdit((current) => (current ? { ...current, [key]: data.path } : current));
   }
 
   const filtered = items.filter((item) => {
@@ -94,7 +96,7 @@ export default function HubMenuPage() {
 
   return (
     <HubShell title="Menu">
-      <p className="mb-6 text-sm text-mist">This list is what guests see on the public website. Drop a photo onto an item, or choose one from your computer.</p>
+      <p className="mb-6 text-sm text-mist">This list is what guests see on the public website. The front photo is the one on the menu. A second photo of the same item sits behind it.</p>
       <div className="mb-6 flex flex-wrap items-center gap-3">
         <button type="button" onClick={() => { setUploadError(""); setEdit({ ...empty }); }} className="bg-navy px-4 py-2 text-[12px] uppercase tracking-[0.16em] text-cream">
           Add item
@@ -168,38 +170,34 @@ export default function HubMenuPage() {
                 <input value={edit.cat} onChange={(e) => setEdit({ ...edit, cat: e.target.value })} placeholder="Category" className="border border-line bg-white px-3 py-2" />
               </div>
               <textarea value={edit.description} onChange={(e) => setEdit({ ...edit, description: e.target.value })} placeholder="Description" className="border border-line bg-white px-3 py-2" />
-              <label
-                onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-                onDragLeave={() => setDragOver(false)}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  setDragOver(false);
-                  const file = e.dataTransfer.files[0];
-                  if (file) uploadPhoto(file);
-                }}
-                className={`block cursor-pointer border border-dashed px-3 py-6 text-center text-sm ${dragOver ? "border-navy bg-white" : "border-line bg-white"}`}
-              >
-                {edit.imagePath ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={edit.imagePath} alt="" className="mx-auto mb-3 h-32 w-full max-w-xs object-cover" />
-                ) : null}
-                <input
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp,image/gif,.jpg,.jpeg,.png,.webp,.gif"
-                  className="sr-only"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) uploadPhoto(file);
-                    e.target.value = "";
-                  }}
-                />
-                <span className="text-navy">
-                  {uploading ? "Uploading…" : edit.imagePath ? "Drop a new photo, or click to choose one" : "Drop a photo here, or click to choose from your computer"}
-                </span>
-              </label>
+              <PhotoDrop
+                label="Front photo"
+                hint={edit.imagePath ? "Drop a new front photo, or click to choose one" : "Drop the front photo here, or click to choose one"}
+                src={edit.imagePath}
+                busy={uploading}
+                active={dragOver === "front"}
+                onDragOver={() => setDragOver("front")}
+                onDragLeave={() => setDragOver("")}
+                onFile={(file) => uploadPhoto(file, "front")}
+              />
               {edit.imagePath ? (
                 <button type="button" className="text-left text-sm text-mist" onClick={() => setEdit({ ...edit, imagePath: "" })}>
-                  Remove photo
+                  Remove front photo
+                </button>
+              ) : null}
+              <PhotoDrop
+                label="Photo behind"
+                hint={edit.behindPath ? "Drop a new photo for behind, or click to choose one" : "A second shot of this same item. It shows behind the front photo."}
+                src={edit.behindPath || ""}
+                busy={uploading}
+                active={dragOver === "behind"}
+                onDragOver={() => setDragOver("behind")}
+                onDragLeave={() => setDragOver("")}
+                onFile={(file) => uploadPhoto(file, "behind")}
+              />
+              {edit.behindPath ? (
+                <button type="button" className="text-left text-sm text-mist" onClick={() => setEdit({ ...edit, behindPath: "" })}>
+                  Remove the photo behind
                 </button>
               ) : null}
               {uploadError ? <p className="text-sm text-red-700">{uploadError}</p> : null}
@@ -237,5 +235,59 @@ export default function HubMenuPage() {
         </div>
       ) : null}
     </HubShell>
+  );
+}
+
+function PhotoDrop({
+  label,
+  hint,
+  src,
+  busy,
+  active,
+  onDragOver,
+  onDragLeave,
+  onFile,
+}: {
+  label: string;
+  hint: string;
+  src: string;
+  busy: boolean;
+  active: boolean;
+  onDragOver: () => void;
+  onDragLeave: () => void;
+  onFile: (file: File) => void;
+}) {
+  return (
+    <label
+      onDragOver={(e) => {
+        e.preventDefault();
+        onDragOver();
+      }}
+      onDragLeave={onDragLeave}
+      onDrop={(e) => {
+        e.preventDefault();
+        onDragLeave();
+        const file = e.dataTransfer.files[0];
+        if (file) onFile(file);
+      }}
+      className={`block cursor-pointer border border-dashed px-3 py-6 text-center text-sm ${active ? "border-navy bg-white" : "border-line bg-white"}`}
+    >
+      <span className="block text-[11px] uppercase tracking-[0.16em] text-mist">{label}</span>
+      {src ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={src} alt="" className="mx-auto mb-3 mt-3 h-32 w-full max-w-xs object-cover" />
+      ) : null}
+      <input
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/gif,.jpg,.jpeg,.png,.webp,.gif"
+        className="sr-only"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) onFile(file);
+          e.target.value = "";
+        }}
+      />
+      <span className="mt-2 block text-navy">{busy ? "Uploading…" : hint}</span>
+    </label>
   );
 }

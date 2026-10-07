@@ -15,6 +15,7 @@ export type MenuItem = {
   active: boolean;
   featured: boolean;
   imagePath: string;
+  behindPath?: string;
   sizes: MenuSize[];
 };
 
@@ -45,6 +46,49 @@ export type DailyEntry = {
   cups: number;
   revenue: number;
   notes: string;
+};
+
+export type BagSize = {
+  id: string;
+  label: string;
+  grams: number;
+  price: number;
+};
+
+export type ShopProduct = {
+  id: string;
+  name: string;
+  summary: string;
+  active: boolean;
+  imagePath: string;
+  behindPath?: string;
+  sizes: BagSize[];
+};
+
+export type OrderStatus = "new" | "ready" | "collected" | "cancelled";
+
+export type OrderLine = {
+  productId: string;
+  name: string;
+  sizeId: string;
+  sizeLabel: string;
+  grams: number;
+  price: number;
+  qty: number;
+};
+
+export type ShopOrder = {
+  id: string;
+  number: string;
+  name: string;
+  email: string;
+  phone: string;
+  collectDate: string;
+  note: string;
+  createdAt: string;
+  status: OrderStatus;
+  items: OrderLine[];
+  total: number;
 };
 
 export type EnquiryKind = "message" | "event";

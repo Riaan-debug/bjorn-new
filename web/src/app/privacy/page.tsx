@@ -11,7 +11,8 @@ export default function PrivacyPage() {
         <div className="mt-8 space-y-5 text-sm leading-7 text-mist">
           <p>
             Apostellō Coffee stores only what we need to run the café: loyalty names and phone numbers,
-            daily trade notes, stock counts, and messages or event requests you send through this site.
+            daily trade notes, stock counts, messages or event requests you send through this site,
+            and bag orders (your name, email, phone, and what you asked to collect).
           </p>
           <p>
             Loyalty data is collected at the kiosk or by staff. Phone numbers are used to find your stamp card.

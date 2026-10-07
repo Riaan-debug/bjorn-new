@@ -3,7 +3,7 @@ import { requireOwner } from "@/lib/auth";
 import { store } from "@/lib/db";
 import { DEFAULT_SETTINGS } from "@/lib/seed";
 import { todayStr, uid } from "@/lib/security";
-import type { Customer, DailyEntry, Enquiry, MenuItem, MenuKind, Settings, SiteContent, StockItem } from "@/lib/types";
+import type { Customer, DailyEntry, Enquiry, MenuItem, MenuKind, OrderStatus, Settings, ShopOrder, ShopProduct, SiteContent, StockItem } from "@/lib/types";
 import { mergeSite } from "@/lib/site";
 
 const SETTINGS_KEYS = Object.keys(DEFAULT_SETTINGS) as (keyof Settings)[];
@@ -81,6 +81,7 @@ function cleanMenu(raw: unknown): MenuItem[] {
       active: row.active !== false,
       featured: Boolean(row.featured),
       imagePath: String(row.imagePath || ""),
+      behindPath: String(row.behindPath || ""),
       sizes,
     };
   });
@@ -115,6 +116,69 @@ function cleanDaily(raw: unknown): DailyEntry[] {
   });
 }
 
+function cleanShop(raw: unknown): ShopProduct[] {
+  if (!Array.isArray(raw)) return store.shopProducts();
+  return raw.map((item) => {
+    const row = asRecord(item) ?? {};
+    const sizes = Array.isArray(row.sizes)
+      ? row.sizes.map((size) => {
+          const s = asRecord(size) ?? {};
+          return {
+            id: String(s.id || uid()),
+            label: String(s.label || "Bag"),
+            grams: Number(s.grams || 0) || 0,
+            price: Number(s.price || 0) || 0,
+          };
+        })
+      : [];
+    return {
+      id: String(row.id || uid()),
+      name: String(row.name || "Bag"),
+      summary: String(row.summary || ""),
+      active: row.active !== false,
+      imagePath: String(row.imagePath || ""),
+      behindPath: String(row.behindPath || ""),
+      sizes,
+    };
+  });
+}
+
+function cleanOrders(raw: unknown): ShopOrder[] {
+  if (!Array.isArray(raw)) return store.orders();
+  const statuses: OrderStatus[] = ["new", "ready", "collected", "cancelled"];
+  return raw.map((item) => {
+    const row = asRecord(item) ?? {};
+    const status = statuses.includes(row.status as OrderStatus) ? (row.status as OrderStatus) : "new";
+    const items = Array.isArray(row.items)
+      ? row.items.map((line) => {
+          const s = asRecord(line) ?? {};
+          return {
+            productId: String(s.productId || ""),
+            name: String(s.name || "Bag"),
+            sizeId: String(s.sizeId || ""),
+            sizeLabel: String(s.sizeLabel || ""),
+            grams: Number(s.grams || 0) || 0,
+            price: Number(s.price || 0) || 0,
+            qty: Number(s.qty || 0) || 0,
+          };
+        })
+      : [];
+    return {
+      id: String(row.id || uid()),
+      number: String(row.number || ""),
+      name: String(row.name || ""),
+      email: String(row.email || ""),
+      phone: String(row.phone || ""),
+      collectDate: String(row.collectDate || ""),
+      note: String(row.note || ""),
+      createdAt: String(row.createdAt || new Date().toISOString()),
+      status,
+      items,
+      total: Number(row.total || 0) || 0,
+    };
+  });
+}
+
 function cleanEnquiries(raw: unknown): Enquiry[] {
   if (!Array.isArray(raw)) return store.enquiries();
   return raw.map((item) => {
@@ -143,6 +207,8 @@ export async function GET() {
       stock: store.stock(),
       dailyLog: store.dailyLog(),
       enquiries: store.enquiries(),
+      shopProducts: store.shopProducts(),
+      orders: store.orders(),
       site: store.site(),
     });
   } catch (error) {
@@ -163,6 +229,8 @@ export async function POST(request: Request) {
     if (Array.isArray(data.dailyLog)) store.saveDailyLog(cleanDaily(data.dailyLog));
     if (Array.isArray(data.menuItems)) store.saveMenuItems(cleanMenu(data.menuItems));
     if (Array.isArray(data.enquiries)) store.saveEnquiries(cleanEnquiries(data.enquiries));
+    if (Array.isArray(data.shopProducts)) store.saveShopProducts(cleanShop(data.shopProducts));
+    if (Array.isArray(data.orders)) store.saveOrders(cleanOrders(data.orders));
     if (asRecord(data.settings)) store.saveSettings(cleanSettings(data.settings));
     if (asRecord(data.site) || asRecord(data.special)) {
       const incoming = asRecord(data.site) ?? data;

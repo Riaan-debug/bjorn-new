@@ -1,11 +1,11 @@
 import Database from "better-sqlite3";
 import { mkdirSync } from "fs";
 import path from "path";
-import type { Customer, DailyEntry, Enquiry, MenuItem, Settings, SiteContent, StaffRole, StockItem } from "./types";
-import { DEFAULT_SETTINGS, MENU_SEED, STOCK_SEED } from "./seed";
+import type { Customer, DailyEntry, Enquiry, MenuItem, OrderStatus, Settings, ShopOrder, ShopProduct, SiteContent, StaffRole, StockItem } from "./types";
+import { DEFAULT_SETTINGS, MENU_SEED, SHOP_SEED, STOCK_SEED } from "./seed";
 import { DEFAULT_SITE, mergeSite } from "./site";
 
-type StoreKey = "settings" | "menuItems" | "customers" | "stock" | "dailyLog" | "enquiries" | "auth" | "site";
+type StoreKey = "settings" | "menuItems" | "customers" | "stock" | "dailyLog" | "enquiries" | "auth" | "site" | "shopProducts" | "orders";
 
 export type AuthAccount = {
   id: string;
@@ -41,6 +41,7 @@ export function getDb() {
     );
   `);
   seedIfNeeded(db);
+  ensureShop(db);
   instance = db;
   return db;
 }
@@ -61,6 +62,20 @@ function write<T>(db: Database.Database, key: StoreKey, value: T) {
     VALUES (?, ?, datetime('now'))
     ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at
   `).run(key, JSON.stringify(value));
+}
+
+function ensureShop(db: Database.Database) {
+  const has = db.prepare("SELECT 1 AS ok FROM store WHERE key = ?");
+  if (!has.get("shopProducts")) write(db, "shopProducts", SHOP_SEED);
+  if (!has.get("orders")) write(db, "orders", []);
+}
+
+function orderGrams(order: ShopOrder) {
+  return order.items.reduce((sum, item) => sum + item.grams * item.qty, 0);
+}
+
+function coffeeBeans(list: StockItem[]) {
+  return list.find((item) => /coffee beans/i.test(item.name)) ?? null;
 }
 
 function seedIfNeeded(db: Database.Database) {
@@ -125,6 +140,65 @@ export const store = {
   saveSite(value: SiteContent) {
     write(getDb(), "site", mergeSite(value));
   },
+  shopProducts(): ShopProduct[] {
+    return read(getDb(), "shopProducts", SHOP_SEED);
+  },
+  saveShopProducts(value: ShopProduct[]) {
+    write(getDb(), "shopProducts", value);
+  },
+  orders(): ShopOrder[] {
+    return read(getDb(), "orders", []);
+  },
+  saveOrders(value: ShopOrder[]) {
+    write(getDb(), "orders", value);
+  },
+  placeOrder(order: ShopOrder): { ok: true } | { ok: false; error: string } {
+    const run = getDb().transaction(() => {
+      const grams = orderGrams(order);
+      const stock = store.stock();
+      const beans = coffeeBeans(stock);
+      if (beans && beans.count < grams) {
+        return { ok: false as const, error: "There isn't enough of the house blend for that many bags." };
+      }
+      if (beans) {
+        beans.count = Math.round((beans.count - grams) * 1000) / 1000;
+        store.saveStock(stock);
+      }
+      const orders = store.orders();
+      orders.unshift(order);
+      store.saveOrders(orders.slice(0, 400));
+      return { ok: true as const };
+    });
+    return run();
+  },
+  setOrderStatus(id: string, status: OrderStatus): { ok: true } | { ok: false; error: string } {
+    const run = getDb().transaction(() => {
+      const orders = store.orders();
+      const order = orders.find((item) => item.id === id);
+      if (!order) return { ok: false as const, error: "Order not found" };
+      if (order.status === status) return { ok: true as const };
+      const grams = orderGrams(order);
+      const stock = store.stock();
+      const beans = coffeeBeans(stock);
+      const reopening = order.status === "cancelled" && status !== "cancelled";
+      const cancelling = order.status !== "cancelled" && status === "cancelled";
+      if (beans && reopening) {
+        if (beans.count < grams) {
+          return { ok: false as const, error: "Not enough beans to reopen this order." };
+        }
+        beans.count = Math.round((beans.count - grams) * 1000) / 1000;
+        store.saveStock(stock);
+      }
+      if (beans && cancelling) {
+        beans.count = Math.round((beans.count + grams) * 1000) / 1000;
+        store.saveStock(stock);
+      }
+      order.status = status;
+      store.saveOrders(orders);
+      return { ok: true as const };
+    });
+    return run();
+  },
 };
 
 export function publicSettings() {
@@ -154,7 +228,7 @@ export function publicMenu() {
   return store
     .menuItems()
     .filter((item) => item.active)
-    .map(({ id, name, kind, cat, description, featured, imagePath, sizes }) => ({
+    .map(({ id, name, kind, cat, description, featured, imagePath, behindPath, sizes }) => ({
       id,
       name,
       kind,
@@ -162,8 +236,50 @@ export function publicMenu() {
       description,
       featured,
       imagePath,
+      behindPath: behindPath && behindPath !== imagePath ? behindPath : "",
       sizes,
     }));
+}
+
+export function publicShop() {
+  return store
+    .shopProducts()
+    .filter((product) => product.active)
+    .map((product) => ({
+      id: product.id,
+      name: product.name,
+      summary: product.summary,
+      imagePath: product.imagePath,
+      behindPath: product.behindPath && product.behindPath !== product.imagePath ? product.behindPath : "",
+      sizes: product.sizes
+        .filter((size) => size.price > 0 && size.grams > 0)
+        .map(({ id, label, grams, price }) => ({ id, label, grams, price })),
+    }))
+    .filter((product) => product.sizes.length > 0);
+}
+
+export function publicOrder(id: string) {
+  const order = store.orders().find((item) => item.id === id);
+  if (!order) return null;
+  const settings = store.settings();
+  return {
+    id: order.id,
+    number: order.number,
+    name: order.name,
+    collectDate: order.collectDate,
+    status: order.status,
+    note: order.note,
+    items: order.items.map((item) => ({
+      name: item.name,
+      sizeLabel: item.sizeLabel,
+      qty: item.qty,
+      price: item.price,
+    })),
+    total: order.total,
+    address: settings.address,
+    location: settings.location,
+    tradingHours: settings.tradingHours,
+  };
 }
 
 export function publicSite() {

@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     template: "%s · Apostellō Coffee",
   },
   description: "not just served, Sent. Speciality coffee and smash burgers at Olympus | CMV Group, Pretoria.",
-  metadataBase: new URL("http://localhost:4568"),
+  metadataBase: new URL("http://localhost:4128"),
   openGraph: {
     title: "Apostellō Coffee",
     description: "not just served, Sent. Speciality coffee and smash burgers in Olympus, Pretoria.",

@@ -21,7 +21,10 @@
 
 * { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  overflow-x: clip;
+}
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -63,8 +66,13 @@ html { scroll-behavior: smooth; }
 }
 
 .pinboard-card {
-  transform: rotate(var(--tilt, 0deg));
   box-shadow: 0 10px 24px rgba(1, 27, 61, 0.06);
+}
+
+@media (min-width: 640px) {
+  .pinboard-card {
+    transform: rotate(var(--tilt, 0deg));
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -291,7 +299,8 @@ tr.low td {
 }
 
 .nav-link:hover::after,
-.nav-link:focus-visible::after {
+.nav-link:focus-visible::after,
+.nav-link-current::after {
   width: 100%;
 }
 
@@ -321,4 +330,52 @@ tr.low td {
 .nav-link-light:hover,
 .nav-link-light:focus-visible {
   color: var(--navy);
+}
+
+/* Full-bleed rules stop at the falling-bean films so they do not cut across them. */
+.bean-rule-t,
+.bean-rule-b,
+.bean-rule-y {
+  position: relative;
+}
+
+.bean-rule-t::before,
+.bean-rule-b::after,
+.bean-rule-y::before,
+.bean-rule-y::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: var(--line);
+  pointer-events: none;
+}
+
+.bean-rule-t::before,
+.bean-rule-y::before {
+  top: 0;
+}
+
+.bean-rule-b::after,
+.bean-rule-y::after {
+  bottom: 0;
+}
+
+:root {
+  --bean-strip: 0px;
+}
+
+@media (min-width: 80rem) {
+  :root {
+    --bean-strip: calc((100vw - 72rem) * 0.4);
+  }
+
+  .bean-rule-t::before,
+  .bean-rule-b::after,
+  .bean-rule-y::before,
+  .bean-rule-y::after {
+    left: var(--bean-strip);
+    right: var(--bean-strip);
+  }
 }

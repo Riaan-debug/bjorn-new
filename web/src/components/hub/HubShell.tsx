@@ -15,6 +15,8 @@ const NAV = [
   { href: "/hub/site", label: "Site", ownerOnly: true },
   { href: "/hub/stock", label: "Stock", ownerOnly: false },
   { href: "/hub/daily", label: "Daily log", ownerOnly: false },
+  { href: "/hub/orders", label: "Orders", ownerOnly: false },
+  { href: "/hub/shop", label: "Shop", ownerOnly: true },
   { href: "/hub/enquiries", label: "Enquiries", ownerOnly: false },
   { href: "/hub/settings", label: "Settings", ownerOnly: true },
 ];

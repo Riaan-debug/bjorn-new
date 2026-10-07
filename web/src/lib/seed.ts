@@ -1,4 +1,4 @@
-import type { MenuItem, Settings, StockItem } from "./types";
+import type { MenuItem, Settings, ShopProduct, StockItem } from "./types";
 
 export const DEFAULT_SETTINGS: Settings = {
   businessName: "Apostellō Coffee",
@@ -28,6 +28,45 @@ const T = (price: number) => ({ sz: "T", label: "Tall", price });
 const G = (price: number) => ({ sz: "G", label: "Grande", price });
 const R = (price: number) => ({ sz: "R", label: "Regular", price });
 const L = (price: number) => ({ sz: "L", label: "Large", price });
+
+export const SHOP_SEED: ShopProduct[] = [
+  {
+    id: "house",
+    name: "House blend",
+    summary: "A bag of the same beans as the cup at Olympus.",
+    active: true,
+    imagePath: "/media/shop/house-front.jpg",
+    behindPath: "/media/shop/house-behind.jpg",
+    sizes: [
+      { id: "250", label: "250 g", grams: 250, price: 160 },
+      { id: "1000", label: "1 kg", grams: 1000, price: 500 },
+    ],
+  },
+  {
+    id: "guatemala",
+    name: "Guatemala Hills",
+    summary: "The larger half of the house blend, bagged on its own.",
+    active: true,
+    imagePath: "/media/shop/guatemala-front.jpg",
+    behindPath: "/media/shop/guatemala-behind.jpg",
+    sizes: [
+      { id: "250", label: "250 g", grams: 250, price: 185 },
+      { id: "1000", label: "1 kg", grams: 1000, price: 580 },
+    ],
+  },
+  {
+    id: "brazil",
+    name: "Brazil Peaberry",
+    summary: "The other half. Softer, and still the same roast.",
+    active: true,
+    imagePath: "/media/shop/brazil-front.jpg",
+    behindPath: "/media/shop/brazil-behind.jpg",
+    sizes: [
+      { id: "250", label: "250 g", grams: 250, price: 175 },
+      { id: "1000", label: "1 kg", grams: 1000, price: 540 },
+    ],
+  },
+];
 
 export const MENU_SEED: MenuItem[] = [
   { id: "d1", name: "Americano", kind: "drink", cat: "Espresso drinks", active: true, featured: false, description: "Red espresso available.", imagePath: "", sizes: [S(34), T(39), G(44)] },

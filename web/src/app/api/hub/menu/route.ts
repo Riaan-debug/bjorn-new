@@ -20,6 +20,7 @@ const schema = z.object({
   active: z.boolean(),
   featured: z.boolean().optional().default(false),
   imagePath: z.string().max(200).optional().default(""),
+  behindPath: z.string().max(200).optional().default(""),
   sizes: z.array(sizeSchema).min(1).max(6),
 });
 
@@ -48,6 +49,7 @@ export async function POST(request: Request) {
       active: body.active,
       featured: body.featured,
       imagePath: safeText(body.imagePath, 200),
+      behindPath: safeText(body.behindPath, 200),
       sizes: body.sizes,
     };
     const idx = list.findIndex((x) => x.id === item.id);

@@ -35,7 +35,8 @@ export async function POST(request: Request) {
     if (!ext) return reject("Use a JPG, PNG, WEBP, or GIF");
 
     const folderRaw = String(form.get("folder") || "menu");
-    const folder = folderRaw === "site" ? "site" : folderRaw === "menu" ? "menu" : null;
+    const folder =
+      folderRaw === "site" ? "site" : folderRaw === "shop" ? "shop" : folderRaw === "menu" ? "menu" : null;
     if (!folder) return reject("Invalid folder");
 
     const dir = path.join(process.cwd(), "public", "media", folder);

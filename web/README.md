@@ -32,7 +32,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:4568](http://localhost:4568). First hub visit: create a 4–8 digit staff PIN. That same PIN stamps cards on the kiosk.
+Open [http://localhost:4128](http://localhost:4128). First hub visit: create a 4–8 digit staff PIN. That same PIN stamps cards on the kiosk.
 
 ## Security
 

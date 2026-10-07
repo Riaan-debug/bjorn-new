@@ -18,7 +18,7 @@ export default function AboutPage() {
 
   return (
     <SiteChrome>
-      <div className="mx-auto grid max-w-6xl gap-14 px-5 py-16 sm:px-8 md:grid-cols-2">
+      <div className="mx-auto grid max-w-6xl gap-14 px-5 py-16 sm:px-8 md:grid-cols-2 md:[&>*]:min-w-0">
         <div>
           <p className="text-[11px] uppercase tracking-[0.28em] text-mist">Est. 26</p>
           <h1 className="mt-3 font-display text-5xl font-light text-navy">Apostellō</h1>
@@ -53,8 +53,8 @@ export default function AboutPage() {
         </div>
         <div className="space-y-6">
           <div className="relative z-20">
-            <SiteImage src={aboutPhoto} label="Portrait / team / machine" className="min-h-[420px]" drift="about" />
-            <PortafilterSticker className="top-8 right-2 w-36 rotate-[12deg] sm:right-4 sm:w-44" />
+            <SiteImage src={aboutPhoto} label="Portrait / team / machine" ratio="aspect-[4/5] sm:aspect-[4/3]" drift="about" />
+            <PortafilterSticker className="top-6 right-1 w-28 rotate-[8deg] sm:top-8 sm:right-4 sm:w-44 sm:rotate-[12deg]" />
           </div>
           <div className="border border-line p-6">
             <p className="text-[11px] uppercase tracking-[0.22em] text-mist">Coffee spec</p>
@@ -74,7 +74,7 @@ export default function AboutPage() {
                 <SiteImage
                   src={person.imagePath}
                   label={person.name}
-                  className="min-h-[280px]"
+                  ratio="aspect-[4/5]"
                   drift={(["teamOne", "teamTwo"] satisfies BeanPreset[])[index % 2]}
                 />
                 <p className="mt-4 font-display text-2xl font-light text-navy">{person.name}</p>
@@ -86,7 +86,7 @@ export default function AboutPage() {
       ) : null}
 
       {reviews.length || settings.googleBizUrl || settings.googleReviewUrl ? (
-        <section className="border-t border-line">
+        <section className="bean-rule-t">
           <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8">
             <p className="text-[11px] uppercase tracking-[0.28em] text-mist">From guests</p>
             <h2 className="mt-3 font-display text-4xl font-light text-navy">Reviews</h2>

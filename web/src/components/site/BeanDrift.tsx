@@ -59,6 +59,11 @@ const PRESETS = {
     { left: "62%", top: "72%", size: 34 },
     { left: "78%", top: "46%", size: 16 },
   ],
+  visit: [
+    { left: "74%", top: "12%", size: 26 },
+    { left: "86%", top: "40%", size: 16 },
+    { left: "68%", top: "70%", size: 32 },
+  ],
   teamOne: [
     { left: "10%", top: "14%", size: 24 },
     { left: "66%", top: "68%", size: 30 },

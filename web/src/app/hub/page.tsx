@@ -11,6 +11,7 @@ type Stats = {
   todayRevenue: number;
   members: number;
   unread: number;
+  openOrders: number;
   weekCups: number;
   weekRevenue: number;
   lowStock: { name: string }[];
@@ -53,6 +54,9 @@ export default function HubHomePage() {
           </div>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/kiosk" className="bg-navy px-5 py-3 text-[12px] uppercase tracking-[0.18em] text-cream">Open kiosk</Link>
+            <Link href="/hub/orders" className="border border-navy px-5 py-3 text-[12px] uppercase tracking-[0.18em] text-navy">
+              Bag orders{stats.openOrders ? ` (${stats.openOrders})` : ""}
+            </Link>
             <Link href="/hub/enquiries" className="border border-navy px-5 py-3 text-[12px] uppercase tracking-[0.18em] text-navy">
               Enquiries{stats.unread ? ` (${stats.unread})` : ""}
             </Link>
