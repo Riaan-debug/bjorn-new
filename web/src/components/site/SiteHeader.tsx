@@ -20,8 +20,8 @@ export function SiteHeader({ darkHero = false }: { darkHero?: boolean }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
-  const overlay = darkHero;
-  const creamBar = !overlay;
+  const overlay = darkHero || open;
+  const creamBar = !darkHero && !open;
 
   useEffect(() => {
     setOpen(false);
@@ -38,8 +38,8 @@ export function SiteHeader({ darkHero = false }: { darkHero?: boolean }) {
 
   return (
     <>
-    <header className={overlay ? "absolute inset-x-0 top-0 z-50" : "relative z-50"}>
-      <div className={creamBar ? "bean-rule-b bg-cream/95 backdrop-blur" : undefined}>
+    <header className={darkHero ? "absolute inset-x-0 top-0 z-50" : "relative z-50"}>
+      <div className={creamBar ? "bean-rule-b bg-cream/95 backdrop-blur" : open && !darkHero ? "bg-navy" : undefined}>
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-5 sm:px-8">
         <Link href="/" className="relative z-50" onClick={() => setOpen(false)}>
           <Wordmark invert={overlay} size="sm" />
@@ -71,8 +71,8 @@ export function SiteHeader({ darkHero = false }: { darkHero?: boolean }) {
           </Link>
           <CardLink overlay={overlay} />
         </div>
-        <div className="flex items-center gap-4 md:hidden">
-          <BagLink overlay={overlay} />
+        <div className="flex items-center gap-3 md:hidden">
+          <BagLink overlay={overlay} icon />
           <CardLink overlay={overlay} />
           <button
             type="button"
@@ -103,28 +103,37 @@ export function SiteHeader({ darkHero = false }: { darkHero?: boolean }) {
       </div>
     </header>
     {open ? (
-      <div id="site-nav" className={`fixed inset-0 z-40 overflow-y-auto overscroll-contain px-8 pb-16 pt-24 md:hidden ${creamBar ? "bg-cream" : "bg-navy"}`}>
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-7">
-          <BagLink overlay={!creamBar} onClick={() => setOpen(false)} className="w-fit" />
+      <div
+        id="site-nav"
+        className="fixed inset-0 z-40 flex flex-col overflow-y-auto overscroll-contain bg-navy px-8 pb-10 pt-24 text-cream md:hidden"
+      >
+        <nav className="mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center">
+          {LINKS.map((link) => {
+            const current = pathname === link.href || pathname.startsWith(`${link.href}/`);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={current ? "page" : undefined}
+                className={`sheet-link font-display text-[2.55rem] font-bold uppercase leading-[1.05] tracking-tight ${
+                  current ? "text-cream" : "text-cream/70"
+                }`}
+                onClick={() => setOpen(false)}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+        </nav>
+        <div className="mx-auto mt-10 flex w-full max-w-6xl flex-col items-start gap-5">
           <Link
             href="/events"
-            className={`w-fit border px-4 py-2 text-[12px] uppercase tracking-[0.18em] ${
-              creamBar ? "border-navy text-navy" : "border-cream text-cream"
-            }`}
+            className="border border-cream px-5 py-2.5 text-[12px] uppercase tracking-[0.2em] text-cream"
             onClick={() => setOpen(false)}
           >
             Book us
           </Link>
-          {LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`font-display text-4xl font-light leading-none ${creamBar ? "text-navy" : "text-cream"}`}
-              onClick={() => setOpen(false)}
-            >
-              {link.label}
-            </Link>
-          ))}
+          <p className="text-[11px] uppercase tracking-[0.28em] text-cream/55">Est. 26 · Olympus</p>
         </div>
       </div>
     ) : null}

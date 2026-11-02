@@ -353,6 +353,17 @@ tr.low td {
   color: var(--navy);
 }
 
+.sheet-link {
+  border-bottom: 1px solid rgba(255, 253, 245, 0.14);
+  padding: 0.55rem 0;
+  text-shadow: 0 3px 10px rgba(1, 27, 61, 0.28);
+}
+
+.sheet-link[aria-current="page"] {
+  box-shadow: inset 3px 0 0 var(--cream);
+  padding-left: 0.85rem;
+}
+
 .profile-cup {
   position: relative;
   display: grid;
