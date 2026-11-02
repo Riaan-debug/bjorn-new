@@ -2,10 +2,10 @@ import Database from "better-sqlite3";
 import { mkdirSync } from "fs";
 import path from "path";
 import type { Customer, DailyEntry, Enquiry, MenuItem, OrderStatus, Settings, ShopOrder, ShopProduct, SiteContent, StaffRole, StockItem } from "./types";
-import { DEFAULT_SETTINGS, MENU_SEED, SHOP_SEED, STOCK_SEED } from "./seed";
+import { DEFAULT_SETTINGS, MENU_SEED, MERCH_SEED, SHOP_SEED, STOCK_SEED } from "./seed";
 import { DEFAULT_SITE, mergeSite } from "./site";
 
-type StoreKey = "settings" | "menuItems" | "customers" | "stock" | "dailyLog" | "enquiries" | "auth" | "site" | "shopProducts" | "orders";
+type StoreKey = "settings" | "menuItems" | "customers" | "stock" | "dailyLog" | "enquiries" | "auth" | "site" | "shopProducts" | "orders" | "shopMerch";
 
 export type AuthAccount = {
   id: string;
@@ -68,6 +68,22 @@ function ensureShop(db: Database.Database) {
   const has = db.prepare("SELECT 1 AS ok FROM store WHERE key = ?");
   if (!has.get("shopProducts")) write(db, "shopProducts", SHOP_SEED);
   if (!has.get("orders")) write(db, "orders", []);
+  /* Shops made before merch existed get the starter pieces once. Bjorn can delete them afterwards. */
+  if (!has.get("shopMerch")) {
+    const current = read<ShopProduct[]>(db, "shopProducts", []);
+    const ids = new Set(current.map((product) => product.id));
+    write(db, "shopProducts", [...current, ...MERCH_SEED.filter((product) => !ids.has(product.id))]);
+    write(db, "shopMerch", true);
+  }
+}
+
+export function shopKind(product: Pick<ShopProduct, "kind">) {
+  return product.kind === "merch" ? "merch" : "beans";
+}
+
+/* A size can be bought when it has a price. Beans also need a weight, because stock is kept in grams. */
+export function sellable(product: Pick<ShopProduct, "kind">, size: { price: number; grams: number }) {
+  return size.price > 0 && (shopKind(product) === "merch" || size.grams > 0);
 }
 
 function orderGrams(order: ShopOrder) {
@@ -249,13 +265,16 @@ export function publicShop() {
       id: product.id,
       name: product.name,
       summary: product.summary,
+      kind: shopKind(product),
       imagePath: product.imagePath,
       behindPath: product.behindPath && product.behindPath !== product.imagePath ? product.behindPath : "",
+      /* Merch keeps its unpriced sizes so the labels can show. A size with no price cannot be bought. */
       sizes: product.sizes
-        .filter((size) => size.price > 0 && size.grams > 0)
+        .filter((size) => sellable(product, size) || (shopKind(product) === "merch" && size.price <= 0))
         .map(({ id, label, grams, price }) => ({ id, label, grams, price })),
     }))
-    .filter((product) => product.sizes.length > 0);
+    /* Beans without a price stay off the site. Merch without a price is shown, and sold at the counter. */
+    .filter((product) => product.sizes.some((size) => size.price > 0) || product.kind === "merch");
 }
 
 export function publicOrder(id: string) {

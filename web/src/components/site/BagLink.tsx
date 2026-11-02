@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { bagCount } from "@/lib/bag";
+import { bagCount, hydrateBagFromServer } from "@/lib/bag";
 
 export function BagLink({
   overlay,
@@ -21,6 +21,7 @@ export function BagLink({
   useEffect(() => {
     const sync = () => setCount(bagCount());
     sync();
+    hydrateBagFromServer();
     window.addEventListener("ap-bag", sync);
     window.addEventListener("storage", sync);
     return () => {

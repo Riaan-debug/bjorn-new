@@ -1,4 +1,3 @@
-import type { BeanPreset } from "@/components/site/BeanDrift";
 import { SiteChrome } from "@/components/site/SiteChrome";
 import { SiteImage } from "@/components/site/SiteImage";
 import { PortafilterSticker } from "@/components/site/Stickers";
@@ -21,7 +20,7 @@ export default function AboutPage() {
       <div className="mx-auto grid max-w-6xl gap-14 px-5 py-16 sm:px-8 md:grid-cols-2 md:[&>*]:min-w-0">
         <div>
           <p className="text-[11px] uppercase tracking-[0.28em] text-mist">Est. 26</p>
-          <h1 className="mt-3 font-display text-5xl font-light text-navy">Apostellō</h1>
+          <h1 className="mt-3 font-display text-5xl font-bold tracking-tight text-navy sm:text-6xl">Apostellō</h1>
           <p className="mt-6 text-xl italic text-navy">{settings.slogan}</p>
           <div className="mt-8 space-y-5 text-base leading-8 text-mist">
             <p>
@@ -53,8 +52,8 @@ export default function AboutPage() {
         </div>
         <div className="space-y-6">
           <div className="relative z-20">
-            <SiteImage src={aboutPhoto} label="Portrait / team / machine" ratio="aspect-[4/5] sm:aspect-[4/3]" drift="about" />
-            <PortafilterSticker className="top-6 right-1 w-28 rotate-[8deg] sm:top-8 sm:right-4 sm:w-44 sm:rotate-[12deg]" />
+            <SiteImage src={aboutPhoto} label="Portrait / team / machine" ratio="aspect-[4/5] sm:aspect-[4/3]" />
+            <PortafilterSticker className="top-0 right-1 w-32 -translate-y-1/2 sm:right-4 sm:w-44" />
           </div>
           <div className="border border-line p-6">
             <p className="text-[11px] uppercase tracking-[0.22em] text-mist">Coffee spec</p>
@@ -67,17 +66,12 @@ export default function AboutPage() {
       {team.length ? (
         <section className="mx-auto max-w-6xl px-5 pb-16 sm:px-8">
           <p className="text-[11px] uppercase tracking-[0.28em] text-mist">The counter</p>
-          <h2 className="mt-3 font-display text-4xl font-light text-navy">Meet the team</h2>
+          <h2 className="mt-3 font-display text-4xl font-bold uppercase tracking-tight text-navy">Meet the team</h2>
           <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {team.map((person, index) => (
+            {team.map((person) => (
               <article key={person.id}>
-                <SiteImage
-                  src={person.imagePath}
-                  label={person.name}
-                  ratio="aspect-[4/5]"
-                  drift={(["teamOne", "teamTwo"] satisfies BeanPreset[])[index % 2]}
-                />
-                <p className="mt-4 font-display text-2xl font-light text-navy">{person.name}</p>
+                {person.imagePath ? <SiteImage src={person.imagePath} label={person.name} ratio="aspect-[4/5]" /> : null}
+                <p className={`${person.imagePath ? "mt-4" : ""} font-display text-2xl font-light text-navy`}>{person.name}</p>
                 {person.role ? <p className="mt-1 text-sm text-mist">{person.role}</p> : null}
               </article>
             ))}
@@ -89,7 +83,7 @@ export default function AboutPage() {
         <section className="bean-rule-t">
           <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8">
             <p className="text-[11px] uppercase tracking-[0.28em] text-mist">From guests</p>
-            <h2 className="mt-3 font-display text-4xl font-light text-navy">Reviews</h2>
+            <h2 className="mt-3 font-display text-4xl font-bold uppercase tracking-tight text-navy">Reviews</h2>
             {reviews.length ? (
               <div className="mt-10 grid gap-10 md:grid-cols-2">
                 {reviews.map((review) => (

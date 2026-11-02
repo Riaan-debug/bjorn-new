@@ -2,12 +2,8 @@ type BeanSpot = { left?: string; right?: string; top: string; size: number };
 
 const PRESETS = {
   hero: [
-    { left: "5%", top: "16%", size: 34 },
-    { left: "88%", top: "20%", size: 42 },
-    { left: "91%", top: "60%", size: 28 },
-    { left: "4%", top: "66%", size: 48 },
-    { left: "78%", top: "7%", size: 22 },
-    { left: "13%", top: "86%", size: 26 },
+    { left: "3%", top: "20%", size: 26 },
+    { right: "4%", top: "64%", size: 22 },
   ],
   slogan: [
     { left: "4%", top: "10%", size: 30 },
@@ -102,7 +98,7 @@ export function BeanDrift({
   const tight = preset === "slogan" || preset === "counter" || preset === "menu";
   return (
     <div className={`bean-drift bean-drift-${tone} ${tight ? "bean-drift-tight" : ""} ${className}`} aria-hidden>
-      {PRESETS[preset].map((bean, index) => (
+      {(PRESETS[preset] as BeanSpot[]).map((bean, index) => (
         <span
           key={index}
           className={`bean-drift-item bean-drift-item-${(index % 6) + 1}`}

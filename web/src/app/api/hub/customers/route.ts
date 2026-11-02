@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { asError, guardWrite, json, reject } from "@/lib/api";
 import { requireStaff } from "@/lib/auth";
+import { staffCustomer } from "@/lib/customers";
 import { store } from "@/lib/db";
 import { digits, safeText, todayStr, uid } from "@/lib/security";
 
@@ -13,7 +14,7 @@ const schema = z.object({
 export async function GET() {
   try {
     await requireStaff();
-    return json(store.customers());
+    return json(store.customers().map(staffCustomer));
   } catch (error) {
     return asError(error);
   }

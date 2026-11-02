@@ -7,7 +7,15 @@ import { zar } from "@/lib/format";
 
 type Size = { id: string; label: string; price: number };
 
-export function BuyBag({ productId, sizes }: { productId: string; sizes: Size[] }) {
+export function BuyBag({
+  productId,
+  sizes,
+  kind = "beans",
+}: {
+  productId: string;
+  sizes: Size[];
+  kind?: "beans" | "merch";
+}) {
   const [sizeId, setSizeId] = useState(sizes[0]?.id || "");
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
@@ -45,7 +53,7 @@ export function BuyBag({ productId, sizes }: { productId: string; sizes: Size[] 
               setQty((n) => Math.max(1, n - 1));
               setAdded(false);
             }}
-            aria-label="Fewer bags"
+            aria-label="Fewer"
           >
             −
           </button>
@@ -57,7 +65,7 @@ export function BuyBag({ productId, sizes }: { productId: string; sizes: Size[] 
               setQty((n) => Math.min(6, n + 1));
               setAdded(false);
             }}
-            aria-label="More bags"
+            aria-label="More"
           >
             +
           </button>
@@ -73,7 +81,9 @@ export function BuyBag({ productId, sizes }: { productId: string; sizes: Size[] 
           Add to bag
         </button>
       </div>
-      <p className="mt-4 text-sm leading-7 text-mist">A bag of this coffee. Pay when you collect it at Olympus.</p>
+      <p className="mt-4 text-sm leading-7 text-mist">
+        {kind === "merch" ? "Pay when you collect it at Olympus." : "A bag of this coffee. Pay when you collect it at Olympus."}
+      </p>
       {added ? (
         <Link href="/bag" className="mt-3 inline-block text-sm text-navy underline underline-offset-4">
           In your bag

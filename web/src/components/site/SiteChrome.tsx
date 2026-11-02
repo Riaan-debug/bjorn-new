@@ -2,7 +2,6 @@ import Link from "next/link";
 import { SiteHeader } from "./SiteHeader";
 import { Wordmark } from "./Wordmark";
 import { BackToTop } from "./BackToTop";
-import { BeanFall } from "./BeanFall";
 import { publicSettings } from "@/lib/db";
 
 export function SiteChrome({
@@ -16,7 +15,10 @@ export function SiteChrome({
 
   return (
     <div className="min-h-screen overflow-x-clip bg-cream">
-      <BeanFall />
+      <div className="side-strips" aria-hidden>
+        <span />
+        <span />
+      </div>
       <SiteHeader darkHero={darkHero} />
       <main className="relative z-30 min-w-0">{children}</main>
       <footer className="relative z-30 bean-rule-t bg-navy text-cream">
@@ -35,6 +37,7 @@ export function SiteChrome({
           <div className="flex flex-col items-start gap-3">
             <Link href="/menu" className="nav-link nav-link-dark">Menu</Link>
             <Link href="/beans" className="nav-link nav-link-dark">Shop</Link>
+            <Link href="/account" className="nav-link nav-link-dark">Your cup</Link>
             <Link href="/visit" className="nav-link nav-link-dark">Visit</Link>
             <Link href="/events" className="nav-link nav-link-dark">Book an event</Link>
             <Link href="/reviews" className="nav-link nav-link-dark">Reviews</Link>

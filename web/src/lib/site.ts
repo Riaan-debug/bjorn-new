@@ -5,12 +5,16 @@ export const SITE_PHOTO_SLOTS = [
   { id: "homeSmash", label: "Smash burger still", group: "Home" },
   { id: "homePour", label: "Espresso / pour", group: "Home" },
   { id: "homeCounter", label: "Olympus counter", group: "Home" },
+  { id: "menuBoard", label: "Printed menu board", group: "Menu" },
+  { id: "menuBoardFood", label: "Second board (food), optional", group: "Menu" },
   { id: "about", label: "Portrait / team / machine", group: "About" },
   { id: "events", label: "Event / trailer", group: "Events" },
   { id: "galleryShake", label: "Strawberry shake", group: "Gallery" },
   { id: "galleryBeans", label: "Beans / wholesale", group: "Gallery" },
   { id: "galleryTeam", label: "Team", group: "Gallery" },
   { id: "galleryInterior", label: "Interior detail", group: "Gallery" },
+  { id: "galleryTrailer", label: "Trailer, pouring", group: "Gallery" },
+  { id: "galleryCounter", label: "Trailer counter", group: "Gallery" },
 ] as const;
 
 export const GALLERY_SLOT_IDS = [
@@ -18,19 +22,32 @@ export const GALLERY_SLOT_IDS = [
   "homePour",
   "homeSmash",
   "galleryShake",
-  "galleryBeans",
   "homeCounter",
   "events",
-  "galleryTeam",
   "galleryInterior",
 ] as const;
 
+/* Stills from Bjorn's October shoot. They ship with the site and show until a slot is replaced from the hub.
+   Group pictures with Bjorn in them stay off the public pages. Joan and Sibu stay. */
+const SHIPPED_PHOTOS: Record<string, string> = {
+  homeStory: "/media/site/trailer-pour.jpg",
+  homePour: "/media/site/cup.jpg",
+  homeSmash: "/media/site/smash.jpg",
+  homeCounter: "/media/site/trailer-counter.jpg",
+  about: "/media/site/interior.jpg",
+  events: "/media/site/events.jpg",
+  galleryBeans: "/media/site/beans.jpg",
+  galleryInterior: "/media/site/interior.jpg",
+  galleryTrailer: "/media/site/trailer-pour.jpg",
+  galleryCounter: "/media/site/trailer-counter.jpg",
+};
+
 export const DEFAULT_SITE: SiteContent = {
   special: { active: false, name: "", blurb: "", imagePath: "" },
-  photos: Object.fromEntries(SITE_PHOTO_SLOTS.map((slot) => [slot.id, ""])),
+  photos: Object.fromEntries(SITE_PHOTO_SLOTS.map((slot) => [slot.id, SHIPPED_PHOTOS[slot.id] || ""])),
   team: [
     { id: "t-bjorn", name: "Bjorn", role: "Owner", imagePath: "" },
-    { id: "t-joan", name: "Joan", role: "Office manager", imagePath: "" },
+    { id: "t-joan", name: "Joan", role: "Office manager", imagePath: "/media/site/joan.jpg" },
   ],
   reviews: [],
 };
@@ -52,11 +69,12 @@ function cleanTeam(raw?: TeamPerson[] | null): TeamPerson[] {
     const id = String(row?.id ?? "").trim().slice(0, 40) || `t-${next.length + 1}`;
     if (seen.has(id)) continue;
     seen.add(id);
+    const shipped = DEFAULT_SITE.team.find((person) => person.id === id)?.imagePath || "";
     next.push({
       id,
       name,
       role: String(row?.role ?? "").trim().slice(0, 40),
-      imagePath: cleanImagePath(row?.imagePath),
+      imagePath: cleanImagePath(row?.imagePath) || shipped,
     });
     if (next.length >= 12) break;
   }
@@ -79,10 +97,18 @@ function cleanReviews(raw?: SiteReview[] | null): SiteReview[] {
   return next;
 }
 
+const BJORN_PHOTOS = new Set([
+  "/media/site/trailer.jpg",
+  "/media/site/counter.jpg",
+  "/media/site/machine.jpg",
+  "/media/site/team.jpg",
+]);
+
 export function mergeSite(raw?: Partial<SiteContent> | null): SiteContent {
   const photos: Record<string, string> = { ...DEFAULT_SITE.photos };
   for (const slot of SITE_PHOTO_SLOTS) {
-    photos[slot.id] = cleanImagePath(raw?.photos?.[slot.id]);
+    const incoming = cleanImagePath(raw?.photos?.[slot.id]);
+    photos[slot.id] = incoming && !BJORN_PHOTOS.has(incoming) ? incoming : DEFAULT_SITE.photos[slot.id] || "";
   }
   return {
     special: {

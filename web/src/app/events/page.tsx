@@ -27,7 +27,7 @@ export default function EventsPage() {
         </section>
         <section className="px-5 py-16 sm:px-10">
           <p className="text-[11px] uppercase tracking-[0.28em] text-mist">Off-site</p>
-          <h1 className="mt-3 font-display text-5xl font-light text-navy">Book us</h1>
+          <h1 className="mt-3 font-display text-5xl font-bold uppercase tracking-tight text-navy sm:text-6xl">Book us</h1>
           <p className="mt-6 max-w-xl text-base leading-8 text-mist">
             Apostellō also leaves the Olympus counter. Markets, offices, private tables — coffee trailer
             and smash service, same blend, same navy cups. We need the date, how many guests, whether
@@ -48,7 +48,7 @@ export default function EventsPage() {
             </div>
           ) : null}
           <div className="max-w-xl">
-            <h2 className="mt-12 font-display text-3xl font-light text-navy">Request a date</h2>
+            <h2 className="mt-12 font-display text-3xl font-bold uppercase tracking-tight text-navy">Request a date</h2>
             <p className="mt-3 text-base leading-8 text-mist">
               Send the brief. It lands in the hub. {host} will come back to you.
             </p>

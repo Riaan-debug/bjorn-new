@@ -37,6 +37,15 @@ function cleanCustomers(raw: unknown): Customer[] {
   if (!Array.isArray(raw)) return store.customers();
   return raw.map((item) => {
     const row = asRecord(item) ?? {};
+    const bag = Array.isArray(row.bag)
+      ? row.bag.flatMap((line) => {
+          const s = asRecord(line) ?? {};
+          const productId = String(s.productId || "");
+          const sizeId = String(s.sizeId || "");
+          const qty = Math.min(6, Math.max(1, Math.round(Number(s.qty) || 1)));
+          return productId && sizeId ? [{ productId, sizeId, qty }] : [];
+        })
+      : [];
     return {
       id: String(row.id || uid()),
       name: String(row.name || "Guest"),
@@ -47,6 +56,9 @@ function cleanCustomers(raw: unknown): Customer[] {
       stamps: Number(row.stamps || 0) || 0,
       freeCoffees: Number(row.freeCoffees || 0) || 0,
       notes: String(row.notes || ""),
+      email: String(row.email || ""),
+      pinHash: typeof row.pinHash === "string" ? row.pinHash : "",
+      bag,
     };
   });
 }
@@ -136,6 +148,7 @@ function cleanShop(raw: unknown): ShopProduct[] {
       name: String(row.name || "Bag"),
       summary: String(row.summary || ""),
       active: row.active !== false,
+      kind: row.kind === "merch" ? ("merch" as const) : ("beans" as const),
       imagePath: String(row.imagePath || ""),
       behindPath: String(row.behindPath || ""),
       sizes,
@@ -175,6 +188,7 @@ function cleanOrders(raw: unknown): ShopOrder[] {
       status,
       items,
       total: Number(row.total || 0) || 0,
+      customerId: typeof row.customerId === "string" ? row.customerId : "",
     };
   });
 }

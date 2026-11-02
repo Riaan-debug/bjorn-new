@@ -1,8 +1,10 @@
 import { z } from "zod";
 import { asError, guardWrite, json, reject } from "@/lib/api";
+import { getCustomerSession } from "@/lib/customer-auth";
+import { saveCustomer } from "@/lib/customers";
 import { isCollectDate } from "@/lib/dates";
-import { store } from "@/lib/db";
-import { safeText, uid } from "@/lib/security";
+import { sellable, store } from "@/lib/db";
+import { safeText, todayStr, uid } from "@/lib/security";
 import type { OrderLine, ShopOrder } from "@/lib/types";
 
 const schema = z.object({
@@ -44,10 +46,10 @@ export async function POST(request: Request) {
 
     const items: OrderLine[] = [];
     for (const line of merged.values()) {
-      if (line.qty > 6) return reject("Six bags of one size is the most in a single order.");
+      if (line.qty > 6) return reject("Six of one size is the most in a single order.");
       const product = catalog.find((item) => item.id === line.productId);
-      const size = product?.sizes.find((item) => item.id === line.sizeId && item.price > 0 && item.grams > 0);
-      if (!product || !size) return reject("One of those bags is no longer on the shop.");
+      const size = product?.sizes.find((item) => item.id === line.sizeId && sellable(product, item));
+      if (!product || !size) return reject("One of those items is no longer on the shop.");
       items.push({
         productId: product.id,
         name: product.name,
@@ -59,9 +61,10 @@ export async function POST(request: Request) {
       });
     }
 
-    const bags = items.reduce((sum, item) => sum + item.qty, 0);
-    if (bags > 12) return reject("Twelve bags is the most in a single order.");
+    const pieces = items.reduce((sum, item) => sum + item.qty, 0);
+    if (pieces > 12) return reject("Twelve items is the most in a single order.");
 
+    const session = await getCustomerSession();
     const id = uid();
     const order: ShopOrder = {
       id,
@@ -75,10 +78,17 @@ export async function POST(request: Request) {
       status: "new",
       items,
       total: items.reduce((sum, item) => sum + item.price * item.qty, 0),
+      customerId: session?.customerId,
     };
 
     const placed = store.placeOrder(order);
     if (!placed.ok) return reject(placed.error);
+    if (session) {
+      session.customer.bag = [];
+      session.customer.lastVisit = todayStr();
+      if (!session.customer.email) session.customer.email = safeText(body.email, 120);
+      saveCustomer(session.customer);
+    }
     return json({ id: order.id, number: order.number });
   } catch (error) {
     if (error instanceof z.ZodError) return reject("Please check the order and try again");

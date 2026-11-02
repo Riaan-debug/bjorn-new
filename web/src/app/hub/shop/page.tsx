@@ -5,15 +5,12 @@ import { HubShell } from "@/components/hub/HubShell";
 import { AmountInput } from "@/components/hub/AmountInput";
 import type { ShopProduct } from "@/lib/types";
 
-const empty = (): ShopProduct => ({
-  id: "",
-  name: "",
-  summary: "",
-  active: true,
-  imagePath: "",
-  behindPath: "",
-  sizes: [{ id: "", label: "250 g", grams: 250, price: 0 }],
-});
+const empty = (kind: "beans" | "merch"): ShopProduct =>
+  kind === "merch"
+    ? { id: "", name: "", summary: "", active: true, kind, imagePath: "", behindPath: "", sizes: [{ id: "", label: "One size", grams: 0, price: 0 }] }
+    : { id: "", name: "", summary: "", active: true, kind, imagePath: "", behindPath: "", sizes: [{ id: "", label: "250 g", grams: 250, price: 0 }] };
+
+const kindOf = (product: ShopProduct) => (product.kind === "merch" ? "merch" : "beans");
 
 export default function HubShopPage() {
   const [products, setProducts] = useState<ShopProduct[]>([]);
@@ -70,12 +67,13 @@ export default function HubShopPage() {
   return (
     <HubShell title="Shop">
       <p className="max-w-2xl text-sm leading-7 text-mist">
-        Each card on the shop is one coffee. Add a bag for every coffee Bjorn sells, with its own photo, sentence, and sizes. A customer pays when they collect.
+        Each card on the shop is one product: a bag of coffee, or a piece of merch. Give it a photo, a sentence, and sizes.
+        A merch piece with no price still shows on the shop, but it can only be bought once a price is set here. A customer pays when they collect.
       </p>
       <form onSubmit={save} className="mt-6 space-y-4">
         {products.map((product, index) => (
           <article key={product.id || index} className="border border-line bg-white p-5">
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-3 sm:grid-cols-[1fr_10rem_auto]">
               <label className="block">
                 <span className="text-[11px] uppercase tracking-[0.16em] text-mist">Name</span>
                 <input
@@ -84,6 +82,17 @@ export default function HubShopPage() {
                   className="mt-1 w-full border border-line px-3 py-2 text-navy"
                   required
                 />
+              </label>
+              <label className="block">
+                <span className="text-[11px] uppercase tracking-[0.16em] text-mist">Kind</span>
+                <select
+                  value={kindOf(product)}
+                  onChange={(e) => patch(index, { ...product, kind: e.target.value as ShopProduct["kind"] })}
+                  className="mt-1 w-full border border-line bg-white px-3 py-2 text-navy"
+                >
+                  <option value="beans">Coffee</option>
+                  <option value="merch">Merch</option>
+                </select>
               </label>
               <label className="mt-7 flex items-center gap-2 text-sm text-navy">
                 <input
@@ -96,7 +105,7 @@ export default function HubShopPage() {
             </div>
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
               <label className="block text-sm text-navy">
-                <span className="text-[11px] uppercase tracking-[0.16em] text-mist">Photo of the bag</span>
+                <span className="text-[11px] uppercase tracking-[0.16em] text-mist">Front photo</span>
                 <input
                   type="file"
                   accept="image/jpeg,image/png,image/webp,image/gif"
@@ -108,7 +117,7 @@ export default function HubShopPage() {
                 />
               </label>
               <label className="block text-sm text-navy">
-                <span className="text-[11px] uppercase tracking-[0.16em] text-mist">Photo behind</span>
+                <span className="text-[11px] uppercase tracking-[0.16em] text-mist">Photo behind (shows on hover)</span>
                 <input
                   type="file"
                   accept="image/jpeg,image/png,image/webp,image/gif"
@@ -130,25 +139,30 @@ export default function HubShopPage() {
             </label>
             <div className="mt-4 space-y-2">
               {product.sizes.map((size, sizeIndex) => (
-                <div key={size.id || sizeIndex} className="grid gap-2 sm:grid-cols-[1fr_8rem_8rem_auto]">
+                <div
+                  key={size.id || sizeIndex}
+                  className={`grid gap-2 ${kindOf(product) === "beans" ? "sm:grid-cols-[1fr_8rem_8rem_auto]" : "sm:grid-cols-[1fr_8rem_auto]"}`}
+                >
                   <input
                     value={size.label}
                     onChange={(e) => {
                       const sizes = product.sizes.map((item, i) => (i === sizeIndex ? { ...item, label: e.target.value } : item));
                       patch(index, { ...product, sizes });
                     }}
-                    placeholder="Size"
+                    placeholder={kindOf(product) === "beans" ? "Size" : "S, M, L, or One size"}
                     className="border border-line px-3 py-2 text-navy"
                     required
                   />
-                  <AmountInput
-                    value={size.grams}
-                    onChange={(grams) => {
-                      const sizes = product.sizes.map((item, i) => (i === sizeIndex ? { ...item, grams } : item));
-                      patch(index, { ...product, sizes });
-                    }}
-                    placeholder="Grams"
-                  />
+                  {kindOf(product) === "beans" ? (
+                    <AmountInput
+                      value={size.grams}
+                      onChange={(grams) => {
+                        const sizes = product.sizes.map((item, i) => (i === sizeIndex ? { ...item, grams } : item));
+                        patch(index, { ...product, sizes });
+                      }}
+                      placeholder="Grams"
+                    />
+                  ) : null}
                   <AmountInput
                     value={size.price}
                     step="any"
@@ -178,14 +192,14 @@ export default function HubShopPage() {
                 onClick={() =>
                   patch(index, {
                     ...product,
-                    sizes: [...product.sizes, { id: "", label: "", grams: 250, price: 0 }],
+                    sizes: [...product.sizes, { id: "", label: "", grams: kindOf(product) === "beans" ? 250 : 0, price: 0 }],
                   })
                 }
               >
                 Add a size
               </button>
               <button type="button" className="text-red-800" onClick={() => setProducts(products.filter((_, i) => i !== index))}>
-                Remove bag
+                Remove product
               </button>
             </div>
           </article>
@@ -199,9 +213,16 @@ export default function HubShopPage() {
           <button
             type="button"
             className="border border-navy px-5 py-3 text-[12px] uppercase tracking-[0.18em] text-navy"
-            onClick={() => setProducts([...products, empty()])}
+            onClick={() => setProducts([...products, empty("beans")])}
           >
             Add a bag
+          </button>
+          <button
+            type="button"
+            className="border border-navy px-5 py-3 text-[12px] uppercase tracking-[0.18em] text-navy"
+            onClick={() => setProducts([...products, empty("merch")])}
+          >
+            Add merch
           </button>
         </div>
       </form>

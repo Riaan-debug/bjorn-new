@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { asError, guardWrite, json, reject } from "@/lib/api";
 import { requireOwner, requireStaff } from "@/lib/auth";
+import { staffCustomer } from "@/lib/customers";
 import { store } from "@/lib/db";
 import { digits, safeText, todayStr } from "@/lib/security";
 
@@ -42,7 +43,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
     }
 
     store.saveCustomers(list);
-    return json(customer);
+    return json(staffCustomer(customer));
   } catch (error) {
     if (error instanceof z.ZodError) return reject("Invalid update");
     return asError(error);

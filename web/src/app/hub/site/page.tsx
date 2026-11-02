@@ -6,7 +6,7 @@ import type { SiteContent, SiteReview, TeamPerson } from "@/lib/types";
 import { DEFAULT_SITE, SITE_PHOTO_SLOTS } from "@/lib/site";
 import { toast } from "@/lib/toast";
 
-const GROUPS = ["Home", "About", "Events", "Gallery"] as const;
+const GROUPS = ["Home", "Menu", "About", "Events", "Gallery"] as const;
 
 export default function HubSitePage() {
   const [site, setSite] = useState<SiteContent>(DEFAULT_SITE);
@@ -133,7 +133,7 @@ export default function HubSitePage() {
 
       <div className="mt-12 max-w-4xl">
         <h2 className="font-display text-xl text-navy">Pictures</h2>
-        <p className="mt-1 text-sm text-mist">Each box is a slot on the site. Drop a photo onto it. Empty slots stay as placeholders.</p>
+        <p className="mt-1 text-sm text-mist">Each box is a slot on the site. Drop a photo onto it. Most slots come with a still from the October shoot; removing a photo brings that still back.</p>
         {GROUPS.map((group) => (
           <section key={group} className="mt-8">
             <h3 className="text-[11px] uppercase tracking-[0.22em] text-mist">{group}</h3>

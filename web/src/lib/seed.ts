@@ -29,12 +29,52 @@ const G = (price: number) => ({ sz: "G", label: "Grande", price });
 const R = (price: number) => ({ sz: "R", label: "Regular", price });
 const L = (price: number) => ({ sz: "L", label: "Large", price });
 
+/* Merch starts without prices. A piece sells once Bjorn sets a price in the hub. */
+export const MERCH_SEED: ShopProduct[] = [
+  {
+    id: "shirt",
+    name: "Apostellō tee",
+    summary: "White, with the wordmark on the chest and the home blend on the back.",
+    active: true,
+    kind: "merch",
+    imagePath: "",
+    behindPath: "",
+    sizes: [
+      { id: "s", label: "S", grams: 0, price: 0 },
+      { id: "m", label: "M", grams: 0, price: 0 },
+      { id: "l", label: "L", grams: 0, price: 0 },
+      { id: "xl", label: "XL", grams: 0, price: 0 },
+    ],
+  },
+  {
+    id: "cap",
+    name: "Apostellō cap",
+    summary: "Navy, one size.",
+    active: true,
+    kind: "merch",
+    imagePath: "",
+    behindPath: "",
+    sizes: [{ id: "one", label: "One size", grams: 0, price: 0 }],
+  },
+  {
+    id: "cup",
+    name: "Apostellō cup",
+    summary: "The cup from the counter, to keep.",
+    active: true,
+    kind: "merch",
+    imagePath: "/media/site/cup.jpg",
+    behindPath: "/media/site/beans.jpg",
+    sizes: [{ id: "one", label: "One size", grams: 0, price: 0 }],
+  },
+];
+
 export const SHOP_SEED: ShopProduct[] = [
   {
     id: "house",
     name: "House blend",
     summary: "A bag of the same beans as the cup at Olympus.",
     active: true,
+    kind: "beans",
     imagePath: "/media/shop/house-front.jpg",
     behindPath: "/media/shop/house-behind.jpg",
     sizes: [
@@ -47,6 +87,7 @@ export const SHOP_SEED: ShopProduct[] = [
     name: "Guatemala Hills",
     summary: "The larger half of the house blend, bagged on its own.",
     active: true,
+    kind: "beans",
     imagePath: "/media/shop/guatemala-front.jpg",
     behindPath: "/media/shop/guatemala-behind.jpg",
     sizes: [
@@ -59,6 +100,7 @@ export const SHOP_SEED: ShopProduct[] = [
     name: "Brazil Peaberry",
     summary: "The other half. Softer, and still the same roast.",
     active: true,
+    kind: "beans",
     imagePath: "/media/shop/brazil-front.jpg",
     behindPath: "/media/shop/brazil-behind.jpg",
     sizes: [
@@ -66,6 +108,7 @@ export const SHOP_SEED: ShopProduct[] = [
       { id: "1000", label: "1 kg", grams: 1000, price: 540 },
     ],
   },
+  ...MERCH_SEED,
 ];
 
 export const MENU_SEED: MenuItem[] = [

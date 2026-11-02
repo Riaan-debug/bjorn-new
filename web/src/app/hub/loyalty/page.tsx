@@ -116,8 +116,8 @@ export default function LoyaltyPage() {
 
   function csv() {
     const rows = [
-      ["Name", "Phone", "Stamps", "Visits", "Last visit", "Notes"],
-      ...filtered.map((c) => [c.name, c.phone, c.stamps, c.visits, c.lastVisit, c.notes || ""]),
+      ["Name", "Phone", "Stamps", "Visits", "Last visit", "Site PIN", "Notes"],
+      ...filtered.map((c) => [c.name, c.phone, c.stamps, c.visits, c.lastVisit, c.hasPin ? "yes" : "", c.notes || ""]),
     ];
     const blob = new Blob([rows.map((r) => r.join(",")).join("\n")], { type: "text/csv" });
     const a = document.createElement("a");
@@ -138,7 +138,7 @@ export default function LoyaltyPage() {
       <div className="table-wrap border border-line bg-white">
         <table>
           <thead>
-            <tr><th>Name</th><th>Phone</th><th>Stamps</th><th>Visits</th><th>Last</th><th></th></tr>
+            <tr><th>Name</th><th>Phone</th><th>Stamps</th><th>Visits</th><th>Last</th><th>Site</th><th></th></tr>
           </thead>
           <tbody>
             {filtered.map((c) => (
@@ -153,6 +153,7 @@ export default function LoyaltyPage() {
                 <td>{c.stamps}</td>
                 <td>{c.visits}</td>
                 <td>{prettyDate(c.lastVisit)}</td>
+                <td>{c.hasPin ? "PIN" : ""}</td>
                 <td className="space-x-2 text-sm">
                   <button type="button" onClick={() => stamp(c.id, 1)} className="text-navy">+1</button>
                   <button type="button" onClick={() => stamp(c.id, -1)} className="text-mist">−1</button>
@@ -161,7 +162,7 @@ export default function LoyaltyPage() {
                 </td>
               </tr>
             ))}
-            {!filtered.length ? <tr><td colSpan={6} className="py-10 text-center text-mist">No customers yet. They can join on the iPad kiosk.</td></tr> : null}
+            {!filtered.length ? <tr><td colSpan={7} className="py-10 text-center text-mist">No customers yet. They can join on the iPad kiosk or on the site.</td></tr> : null}
           </tbody>
         </table>
       </div>

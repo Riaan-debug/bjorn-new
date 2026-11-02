@@ -28,7 +28,7 @@ export default function VisitPage() {
         ) : null}
         <div className="absolute inset-0 bg-gradient-to-t from-navy/80 via-navy/35 to-navy/25" />
         <div className="relative z-10 flex min-h-[78vh] flex-col justify-end px-5 py-12 sm:px-10 sm:py-16">
-          <h1 className="font-display text-6xl font-light sm:text-8xl">Olympus</h1>
+          <h1 className="font-display text-6xl font-bold uppercase tracking-tight sm:text-8xl">Olympus</h1>
           <div className="mt-6 max-w-md space-y-3 text-base leading-7">
             <p>{settings.address}</p>
             <p>{settings.tradingHours}</p>
@@ -64,7 +64,7 @@ export default function VisitPage() {
           </p>
         </div>
         <div id="write" className="scroll-mt-24">
-          <h2 className="font-display text-3xl font-light text-navy">Write to us</h2>
+          <h2 className="font-display text-3xl font-bold uppercase tracking-tight text-navy">Write to us</h2>
           <p className="mt-3 text-base leading-8 text-mist">
             Order a bag of the{" "}
             <Link href="/beans" className="text-navy underline underline-offset-4">

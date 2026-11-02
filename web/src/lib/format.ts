@@ -7,7 +7,7 @@ export function zar(n: number) {
 
 export function prettyDate(value: string) {
   if (!value) return "—";
-  const d = new Date(`${value}T00:00:00`);
+  const d = value.length <= 10 ? new Date(`${value}T00:00:00`) : new Date(value);
   if (Number.isNaN(d.getTime())) return value;
   return d.toLocaleDateString("en-ZA", {
     weekday: "short",

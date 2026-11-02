@@ -14,7 +14,7 @@ export default function ReviewsPage() {
     <SiteChrome>
       <div className="mx-auto max-w-3xl px-5 py-16 sm:px-8">
         <p className="text-[11px] uppercase tracking-[0.28em] text-mist">From guests</p>
-        <h1 className="mt-3 font-display text-5xl font-light text-navy">Reviews</h1>
+        <h1 className="mt-3 font-display text-5xl font-bold uppercase tracking-tight text-navy sm:text-6xl">Reviews</h1>
         <p className="mt-6 max-w-xl text-base leading-8 text-mist">
           A few lines from the counter. If you had a good cup, the honest place to say so is Google.
         </p>

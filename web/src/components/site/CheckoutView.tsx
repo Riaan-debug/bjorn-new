@@ -15,24 +15,36 @@ export function CheckoutView() {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState("");
   const [sending, setSending] = useState(false);
+  const [cardName, setCardName] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const earliest = addIsoDays(cafeToday(), 1);
   const latest = addIsoDays(cafeToday(), 21);
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/public/shop")
-      .then((res) => res.json())
-      .then((products: Product[]) => {
+    Promise.all([
+      fetch("/api/public/shop").then((res) => res.json()),
+      fetch("/api/account/me").then((res) => (res.ok ? res.json() : null)),
+    ])
+      .then(([products, me]) => {
         if (cancelled) return;
-        const catalog = Array.isArray(products) ? products : [];
+        const catalog: Product[] = Array.isArray(products) ? products : [];
         setLines(
           readBag().flatMap((line) => {
             const product = catalog.find((item) => item.id === line.productId);
             const size = product?.sizes.find((item) => item.id === line.sizeId);
-            if (!product || !size) return [];
+            if (!product || !size || size.price <= 0) return [];
             return [{ ...line, name: product.name, sizeLabel: size.label, price: size.price }];
           }),
         );
+        if (me?.name) {
+          setCardName(String(me.name).split(" ")[0]);
+          setName(me.name || "");
+          setEmail(me.email || "");
+          setPhone(me.phone || "");
+        }
         setReady(true);
       })
       .catch(() => {
@@ -75,9 +87,9 @@ export function CheckoutView() {
   return (
     <div className="mx-auto max-w-2xl px-5 py-16 sm:px-8">
       <p className="text-[11px] uppercase tracking-[0.28em] text-mist">Collect at Olympus</p>
-      <h1 className="mt-3 font-display text-5xl font-light text-navy">Checkout</h1>
+      <h1 className="mt-3 font-display text-5xl font-bold uppercase tracking-tight text-navy">Checkout</h1>
       <p className="mt-6 max-w-xl text-base leading-8 text-mist">
-        A bag of coffee, collected at Olympus on a weekday. Pay when you pick it up, between the opening hours.
+        Collect at Olympus on a weekday. Pay when you pick it up, between the opening hours.
       </p>
       {!ready ? <p className="mt-8 text-mist">Loading…</p> : null}
       {ready && lines.length === 0 ? (
@@ -102,9 +114,26 @@ export function CheckoutView() {
             ))}
           </ul>
           <p className="font-display text-2xl font-light text-navy">{zar(total)}</p>
-          <Field name="name" label="Name" required />
-          <Field name="email" label="Email" type="email" required />
-          <Field name="phone" label="Phone" required />
+          {cardName ? (
+            <p className="text-sm leading-7 text-mist">
+              Signed in as {cardName}. This order is kept on{" "}
+              <Link href="/account" className="text-navy underline underline-offset-4">
+                your card
+              </Link>
+              .
+            </p>
+          ) : (
+            <p className="text-sm leading-7 text-mist">
+              Return customer?{" "}
+              <Link href="/account" className="text-navy underline underline-offset-4">
+                Sign in
+              </Link>{" "}
+              so this order sits on your card.
+            </p>
+          )}
+          <Field name="name" label="Name" value={name} onChange={setName} required />
+          <Field name="email" label="Email" type="email" value={email} onChange={setEmail} required />
+          <Field name="phone" label="Phone" value={phone} onChange={setPhone} required />
           <label className="block">
             <span className="text-[11px] uppercase tracking-[0.18em] text-mist">Collect on</span>
             <input
@@ -134,7 +163,21 @@ export function CheckoutView() {
   );
 }
 
-function Field({ name, label, type = "text", required = false }: { name: string; label: string; type?: string; required?: boolean }) {
+function Field({
+  name,
+  label,
+  type = "text",
+  required = false,
+  value,
+  onChange,
+}: {
+  name: string;
+  label: string;
+  type?: string;
+  required?: boolean;
+  value: string;
+  onChange: (value: string) => void;
+}) {
   return (
     <label className="block">
       <span className="text-[11px] uppercase tracking-[0.18em] text-mist">{label}</span>
@@ -142,6 +185,8 @@ function Field({ name, label, type = "text", required = false }: { name: string;
         name={name}
         type={type}
         required={required}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
         className="mt-2 w-full border border-line bg-white px-3 py-3 outline-none focus:border-navy"
       />
     </label>

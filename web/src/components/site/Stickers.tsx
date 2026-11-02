@@ -8,10 +8,12 @@ const NAVY = "#011b3d";
 function Sticker({
   className = "",
   shift,
+  hold = 0.45,
   children,
 }: {
   className?: string;
   shift: number;
+  hold?: number;
   children: ReactNode;
 }) {
   const anchorRef = useRef<HTMLDivElement>(null);
@@ -27,11 +29,15 @@ function Sticker({
     const update = () => {
       frame = 0;
       const rect = anchor.getBoundingClientRect();
-      const raw = (window.innerHeight / 2 - (rect.top + rect.height / 2)) / window.innerHeight;
-      const delta = Math.max(-0.8, Math.min(0.8, raw));
-      const y = -delta * shift;
-      const x = -delta * shift * 0.12;
-      const tilt = -delta * 6;
+      const view = window.innerHeight || 1;
+      // Center of the sticker. Word stickers are placed so this sits on the photo's top edge.
+      const center = rect.top + rect.height / 2;
+      const passed = (view - center) / view;
+      // Hold on the photo until the row sits under the headline, then slide.
+      const t = Math.max(0, Math.min(0.75, passed - hold));
+      const y = t * shift;
+      const x = t * shift * 0.22;
+      const tilt = t * 12;
       node.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${tilt}deg)`;
     };
     const onScroll = () => {
@@ -46,12 +52,116 @@ function Sticker({
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
-  }, [shift]);
+  }, [hold, shift]);
 
   return (
     <div ref={anchorRef} className={`sticker pointer-events-none absolute z-30 ${className}`} aria-hidden>
-      <div ref={motionRef}>{children}</div>
+      <div ref={motionRef} className="will-change-transform">{children}</div>
     </div>
+  );
+}
+
+export function WordSticker({
+  word,
+  className = "",
+  tone = "navy",
+  tilt = -6,
+  shift = 150,
+}: {
+  word: string;
+  className?: string;
+  tone?: "navy" | "cream";
+  tilt?: number;
+  shift?: number;
+}) {
+  return (
+    <Sticker className={className} shift={shift}>
+      <span
+        className={`word-sticker ${tone === "cream" ? "word-sticker-cream" : ""} block whitespace-nowrap text-5xl sm:text-6xl lg:text-7xl`}
+        style={{ transform: `rotate(${tilt}deg)` }}
+      >
+        {word}
+      </span>
+    </Sticker>
+  );
+}
+
+export function cupFirstName(full: string) {
+  return (full || "").trim().split(/\s+/)[0]?.slice(0, 12) || "";
+}
+
+function cupNameSize(name: string) {
+  if (name.length <= 4) return 26;
+  if (name.length <= 6) return 20;
+  if (name.length <= 8) return 16;
+  return 13;
+}
+
+export function ProfileCup({
+  invert = false,
+  filled = false,
+  name = "",
+  labeled = false,
+  className = "",
+}: {
+  invert?: boolean;
+  filled?: boolean;
+  name?: string;
+  labeled?: boolean;
+  className?: string;
+}) {
+  const ink = invert ? CREAM : NAVY;
+  const paper = invert ? NAVY : CREAM;
+  const onCup = cupFirstName(name);
+  const mark = onCup || (labeled ? "Apostellō" : "");
+  return (
+    <svg viewBox="0 0 200 240" fill="none" className={className} aria-hidden>
+      {filled ? (
+        <g stroke={ink} strokeWidth="2.2" strokeLinecap="round" fill="none">
+          <path d="M78 28c0-10 10-10 10 1" />
+          <path d="M98 22c0-12 12-12 12 2" />
+          <path d="M120 28c0-9 9-9 9 1" />
+        </g>
+      ) : null}
+      <path
+        d="M40 74c-2-26 122-26 120 0 0 10-8 16-14 18l-12 100c-4 20-64 20-68 0L54 92c-6-2-14-8-14-18Z"
+        fill={paper}
+        stroke={ink}
+        strokeWidth="5"
+        strokeLinejoin="round"
+      />
+      <path d="M48 78h104" stroke={ink} strokeWidth="2.4" strokeLinecap="round" />
+      {filled ? (
+        <path d="M58 112h88l-3 28H55l3-28Z" fill={ink} />
+      ) : (
+        <path d="M58 112h88l-3 28H55l3-28Z" stroke={ink} strokeWidth="2.4" strokeLinejoin="round" />
+      )}
+      <path
+        d="M160 92c22 4 26 34 4 40"
+        stroke={ink}
+        strokeWidth="5"
+        strokeLinecap="round"
+        fill="none"
+      />
+      {mark ? (
+        <text
+          x="96"
+          y="176"
+          textAnchor="middle"
+          fill={ink}
+          style={{
+            fontFamily: onCup
+              ? "var(--font-marker), 'Permanent Marker', cursive"
+              : "var(--font-montserrat), Montserrat, sans-serif",
+            fontSize: onCup ? cupNameSize(onCup) : 13,
+            fontWeight: onCup ? 400 : 500,
+            letterSpacing: onCup ? "0.04em" : "0.02em",
+          }}
+        >
+          {mark}
+        </text>
+      ) : null}
+    </svg>
   );
 }
 
@@ -123,7 +233,8 @@ export function BurgerSticker({ className = "" }: { className?: string }) {
 
 export function PortafilterSticker({ className = "" }: { className?: string }) {
   return (
-    <Sticker className={className} shift={52}>
+    <Sticker className={className} shift={110} hold={0.86}>
+      <div className="rotate-[8deg]">
       <svg viewBox="0 0 250 150" fill="none">
         <g fill={CREAM} stroke={CREAM} strokeWidth="14" strokeLinejoin="round">
           <circle cx="68" cy="62" r="34" />
@@ -138,6 +249,7 @@ export function PortafilterSticker({ className = "" }: { className?: string }) {
           <path d="M76 72v16" />
         </g>
       </svg>
+      </div>
     </Sticker>
   );
 }

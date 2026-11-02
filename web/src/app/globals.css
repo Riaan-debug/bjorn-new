@@ -17,6 +17,7 @@
   --color-line: var(--line);
   --font-display: var(--font-montserrat);
   --font-sans: var(--font-open-sans);
+  --font-marker: var(--font-marker);
 }
 
 * { box-sizing: border-box; }
@@ -30,57 +31,6 @@ html {
   html { scroll-behavior: auto; }
 }
 
-.pinboard {
-  display: grid;
-  gap: 1.75rem;
-  align-items: start;
-}
-
-@media (min-width: 640px) {
-  .pinboard {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .pinboard-card:nth-child(even) {
-    margin-top: 1.25rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .pinboard {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 2rem 1.5rem;
-  }
-
-  .pinboard-card:nth-child(even) {
-    margin-top: 0;
-  }
-
-  .pinboard-card:nth-child(3n+2) {
-    margin-top: 1.6rem;
-  }
-
-  .pinboard-card:nth-child(3n) {
-    margin-top: 0.7rem;
-  }
-}
-
-.pinboard-card {
-  box-shadow: 0 10px 24px rgba(1, 27, 61, 0.06);
-}
-
-@media (min-width: 640px) {
-  .pinboard-card {
-    transform: rotate(var(--tilt, 0deg));
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .pinboard-card {
-    transform: none;
-  }
-}
-
 body {
   background: var(--cream);
   color: var(--ink);
@@ -89,6 +39,10 @@ body {
 
 h1, h2, h3, h4, .font-display {
   font-family: var(--font-montserrat), Montserrat, sans-serif;
+}
+
+h1, h2 {
+  text-shadow: 0 2px 8px rgba(1, 27, 61, 0.12);
 }
 
 @layer base {
@@ -124,6 +78,38 @@ h1, h2, h3, h4, .font-display {
     );
 }
 
+.collage {
+  grid-auto-rows: 11rem;
+}
+
+@media (min-width: 768px) {
+  .collage {
+    grid-auto-rows: 13rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .collage {
+    grid-auto-rows: 15rem;
+  }
+}
+
+.board {
+  box-shadow:
+    0 1px 0 rgba(1, 27, 61, 0.08),
+    0 24px 48px rgba(1, 27, 61, 0.1);
+}
+
+.sent-word {
+  font-family: var(--font-montserrat), Montserrat, sans-serif;
+  font-size: clamp(4.2rem, 16vw, 11rem);
+  font-weight: 700;
+  letter-spacing: -0.055em;
+  line-height: 0.82;
+  text-transform: uppercase;
+  text-shadow: 0 3px 10px rgba(1, 27, 61, 0.16);
+}
+
 .hero-fallback {
   background:
     radial-gradient(ellipse at 20% 20%, rgba(80, 101, 126, 0.28), transparent 45%),
@@ -138,6 +124,41 @@ h1, h2, h3, h4, .font-display {
   overflow: visible;
   filter: drop-shadow(0 10px 12px rgba(1, 27, 61, 0.16));
 }
+
+/* Brand heading, with the light shadow from the print guide. */
+.word-sticker {
+  font-family: var(--font-montserrat), Montserrat, sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--navy);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  text-shadow: 0 2px 8px rgba(1, 27, 61, 0.16);
+}
+
+.word-sticker-cream {
+  color: var(--cream);
+  text-shadow: 0 1px 0 rgba(1, 27, 61, 0.2), 0 12px 20px rgba(1, 27, 61, 0.28);
+}
+
+/* A thin black rule down each side of the page. Same weight as the old corner ticks. */
+.side-strips {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+}
+
+.side-strips span {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: #000;
+}
+
+.side-strips span:first-child { left: 0; }
+.side-strips span:last-child { right: 0; }
 
 .bean-drift {
   position: absolute;
@@ -332,7 +353,65 @@ tr.low td {
   color: var(--navy);
 }
 
-/* Full-bleed rules stop at the falling-bean films so they do not cut across them. */
+.profile-cup {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.85rem;
+  flex: none;
+  transition: transform 0.2s ease;
+}
+
+.profile-cup:hover,
+.profile-cup:focus-visible {
+  transform: rotate(-8deg) scale(1.08);
+}
+
+.profile-cup-current {
+  transform: rotate(-6deg);
+}
+
+.profile-cup-name {
+  position: absolute;
+  left: 44%;
+  top: 68%;
+  max-width: 1.7rem;
+  overflow: hidden;
+  color: var(--navy);
+  font-family: var(--font-marker), "Permanent Marker", cursive;
+  font-size: 0.62rem;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translate(-50%, -50%) rotate(-7deg);
+}
+
+.profile-cup-name-long {
+  font-size: 0.48rem;
+}
+
+.profile-cup-dark .profile-cup-name {
+  color: var(--cream);
+}
+
+.profile-cup-dot {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--navy);
+}
+
+.profile-cup-dark .profile-cup-dot {
+  background: var(--cream);
+}
+
+/* Hairline rules between sections. */
 .bean-rule-t,
 .bean-rule-b,
 .bean-rule-y {
@@ -364,18 +443,4 @@ tr.low td {
 
 :root {
   --bean-strip: 0px;
-}
-
-@media (min-width: 80rem) {
-  :root {
-    --bean-strip: calc((100vw - 72rem) * 0.4);
-  }
-
-  .bean-rule-t::before,
-  .bean-rule-b::after,
-  .bean-rule-y::before,
-  .bean-rule-y::after {
-    left: var(--bean-strip);
-    right: var(--bean-strip);
-  }
 }

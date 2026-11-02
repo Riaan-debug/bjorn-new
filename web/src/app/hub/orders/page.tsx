@@ -43,11 +43,11 @@ export default function HubOrdersPage() {
   return (
     <HubShell title="Orders">
       <p className="max-w-2xl text-sm leading-7 text-mist">
-        Bags of coffee ordered on the site. The customer pays when they collect. Cancelling an order puts the beans back into stock.
+        Coffee and merch ordered on the site. The customer pays when they collect. Cancelling an order puts the beans back into stock.
       </p>
       {error ? <p className="mt-4 text-sm text-red-800">{error}</p> : null}
       <div className="mt-6 space-y-4">
-        {list.length === 0 ? <p className="text-mist">No bag orders yet.</p> : null}
+        {list.length === 0 ? <p className="text-mist">No orders yet.</p> : null}
         {list.map((order) => (
           <article key={order.id} className={`border bg-white p-5 ${order.status === "new" ? "border-navy" : "border-line"}`}>
             <div className="flex flex-wrap items-start justify-between gap-3">

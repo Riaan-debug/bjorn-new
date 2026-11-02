@@ -19,6 +19,12 @@ export type MenuItem = {
   sizes: MenuSize[];
 };
 
+export type CustomerBagLine = {
+  productId: string;
+  sizeId: string;
+  qty: number;
+};
+
 export type Customer = {
   id: string;
   name: string;
@@ -29,6 +35,10 @@ export type Customer = {
   stamps: number;
   freeCoffees: number;
   notes: string;
+  email?: string;
+  pinHash?: string;
+  bag?: CustomerBagLine[];
+  hasPin?: boolean;
 };
 
 export type StockItem = {
@@ -55,11 +65,15 @@ export type BagSize = {
   price: number;
 };
 
+export type ShopKind = "beans" | "merch";
+
 export type ShopProduct = {
   id: string;
   name: string;
   summary: string;
   active: boolean;
+  /* Older rows have no kind; they are beans. */
+  kind?: ShopKind;
   imagePath: string;
   behindPath?: string;
   sizes: BagSize[];
@@ -89,6 +103,7 @@ export type ShopOrder = {
   status: OrderStatus;
   items: OrderLine[];
   total: number;
+  customerId?: string;
 };
 
 export type EnquiryKind = "message" | "event";

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Montserrat, Open_Sans } from "next/font/google";
+import { Montserrat, Open_Sans, Permanent_Marker } from "next/font/google";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -12,6 +12,12 @@ const openSans = Open_Sans({
   variable: "--font-open-sans",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+});
+
+const marker = Permanent_Marker({
+  variable: "--font-marker",
+  subsets: ["latin"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -35,7 +41,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en-ZA" data-scroll-behavior="smooth" className={`${montserrat.variable} ${openSans.variable} h-full antialiased`}>
+    <html lang="en-ZA" data-scroll-behavior="smooth" className={`${montserrat.variable} ${openSans.variable} ${marker.variable} h-full antialiased`}>
       <body className="min-h-full bg-cream text-ink">{children}</body>
     </html>
   );

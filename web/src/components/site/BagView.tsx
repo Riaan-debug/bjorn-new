@@ -29,7 +29,7 @@ export function BagView() {
               name: product?.name || "Bag",
               sizeLabel: size?.label || "",
               price: size?.price || 0,
-              ok: Boolean(product && size),
+              ok: Boolean(product && size && size.price > 0),
             };
           }),
         );
@@ -54,7 +54,7 @@ export function BagView() {
   return (
     <div className="mx-auto max-w-2xl px-5 py-16 sm:px-8">
       <p className="text-[11px] uppercase tracking-[0.28em] text-mist">To take home</p>
-      <h1 className="mt-3 font-display text-5xl font-light text-navy">Your bag</h1>
+      <h1 className="mt-3 font-display text-5xl font-bold uppercase tracking-tight text-navy">Your bag</h1>
       {!ready ? <p className="mt-8 text-mist">Loading…</p> : null}
       {ready && rows.length === 0 ? (
         <p className="mt-8 text-base leading-8 text-mist">
@@ -121,7 +121,13 @@ export function BagView() {
         </div>
       ) : null}
       {payable.length > 0 ? (
-        <p className="mt-4 text-sm leading-7 text-mist">Pay when you collect at Olympus, on a weekday.</p>
+        <p className="mt-4 text-sm leading-7 text-mist">
+          Pay when you collect at Olympus, on a weekday. Signed in, this bag stays on{" "}
+          <Link href="/account" className="text-navy underline underline-offset-4">
+            your card
+          </Link>
+          .
+        </p>
       ) : null}
     </div>
   );

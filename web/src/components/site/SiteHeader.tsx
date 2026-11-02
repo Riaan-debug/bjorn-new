@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BagLink } from "./BagLink";
+import { CardLink } from "./CardLink";
 import { Wordmark } from "./Wordmark";
 
 const LINKS = [
@@ -68,9 +69,11 @@ export function SiteHeader({ darkHero = false }: { darkHero?: boolean }) {
           >
             Book us
           </Link>
+          <CardLink overlay={overlay} />
         </div>
-        <div className="flex items-center gap-5 md:hidden">
+        <div className="flex items-center gap-4 md:hidden">
           <BagLink overlay={overlay} />
+          <CardLink overlay={overlay} />
           <button
             type="button"
             className={`relative z-50 grid h-11 w-11 place-items-center ${

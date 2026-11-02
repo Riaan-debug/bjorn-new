@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { BeanDrift } from "@/components/site/BeanDrift";
-import { CoolerLoop } from "@/components/site/CoolerLoop";
+import { Collage } from "@/components/site/Collage";
 import { HeroFilm } from "@/components/site/HeroFilm";
+import { SentMoment } from "@/components/site/SentMoment";
 import { SiteChrome } from "@/components/site/SiteChrome";
 import { SiteImage } from "@/components/site/SiteImage";
+import { WordSticker } from "@/components/site/Stickers";
 import { publicMenu, publicSettings, publicSite } from "@/lib/db";
 import { priceRange } from "@/lib/format";
 
@@ -17,7 +18,6 @@ export default function HomePage() {
   const site = publicSite();
   const photos = site.photos;
   const special = site.special;
-  const host = settings.eventsContactName || "Joan";
   const specs = [
     ...settings.coffeeBlend.split("·").map((part) => part.trim()),
     ...settings.coffeeNotes.split(/\. (?=[A-Z])/).map((part) => part.trim().replace(/\.$/, "")),
@@ -28,37 +28,20 @@ export default function HomePage() {
     food.find((item) => /smash/i.test(item.name) && item.imagePath)?.imagePath ||
     food.find((item) => item.imagePath)?.imagePath ||
     "";
-  const pour = photos.events || photos.homePour || special?.imagePath || shot;
-
-  const promises = [
-    { href: "/menu", title: "The shot", image: shot, label: "A shot" },
-    { href: "/menu", title: "The smash", image: smash, label: "A smash burger" },
-    { href: "/events", title: "A pour", image: pour, label: "A pour at an event" },
-    { href: "/visit", title: "Olympus", image: photos.homeCounter, label: "Olympus" },
+  const three = [
+    { href: "/beans", title: "Coffee", line: "Bags of the house blend, to take home.", image: shot, label: "The cup", word: "Sent", shift: -36 },
+    { href: "/menu", title: "Smash", line: "The smash, from the same pass as the coffee.", image: smash, label: "A smash burger", word: "Smash", shift: -48 },
+    { href: "/visit", title: "Olympus", line: "17 Midas Avenue. Weekdays, from seven.", image: photos.homeCounter, label: "The counter", word: "Est. 26", shift: -28 },
   ];
 
-  const prints = [
-    {
-      href: "/visit",
-      action: "Visit",
-      sentence: "The counter at Olympus, while the day is on.",
-      image: photos.homeCounter,
-      label: "Olympus",
-    },
-    {
-      href: "/menu",
-      action: "The menu",
-      sentence: "The smash, from the same pass as the coffee.",
-      image: smash,
-      label: "Smash burger",
-    },
-    {
-      href: "/events",
-      action: "Book us",
-      sentence: "A pour, when the trailer comes to you.",
-      image: pour,
-      label: "A pour",
-    },
+  const collage = [
+    { src: photos.homeStory, label: "The trailer" },
+    { src: photos.events, label: "A pour at the trailer" },
+    { src: photos.galleryInterior, label: "The machine" },
+    { src: photos.galleryCounter, label: "The trailer counter" },
+    { src: photos.homeSmash, label: "The smash" },
+    { src: photos.homePour, label: "The cup" },
+    { src: photos.galleryShake, label: "Strawberry shake" },
   ];
 
   return (
@@ -66,7 +49,6 @@ export default function HomePage() {
       <section className="relative min-h-[92vh] overflow-hidden text-cream">
         <div className="absolute inset-0 hero-fallback" />
         <HeroFilm />
-        <BeanDrift />
         <Link
           href="/menu"
           className="absolute bottom-10 left-1/2 z-30 -translate-x-1/2 bg-navy/85 px-8 py-3 text-[12px] uppercase tracking-[0.22em] text-cream"
@@ -86,59 +68,26 @@ export default function HomePage() {
         </h1>
       </section>
 
-      <section className="bean-rule-y">
-        <ul className="mx-auto grid max-w-6xl grid-cols-2 gap-8 px-5 py-12 sm:px-8 md:grid-cols-4">
-          {promises.map((item) => (
-            <li key={item.title}>
-              <Link href={item.href} className="group block">
-                <Frame src={item.image} label={item.title} ratio="aspect-square" />
-                <p className="mt-3 text-center font-display text-lg font-light text-navy group-hover:underline">
-                  {item.title}
-                </p>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-5 py-20 sm:px-8">
-        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,14rem)_1fr] lg:gap-16">
-          <h2 className="font-display text-7xl font-light leading-none text-navy sm:text-8xl">Sent</h2>
-          <p className="max-w-xl text-base leading-8 text-mist">
-            Apostellō is the Greek for “to send”. The house blend is pulled, then handed over like it matters.
-            There is also the smash.
-          </p>
-        </div>
-        <div className="mt-12 grid items-center gap-8 lg:grid-cols-2">
-          <ul className="flex flex-col gap-3">
-            {specs.map((spec) => (
-              <li key={spec} className="text-[13px] uppercase tracking-[0.16em] text-navy">
-                {spec}
-              </li>
-            ))}
-          </ul>
-          <div className="aspect-video overflow-hidden rounded-md bg-navy">
-            <CoolerLoop />
-          </div>
-        </div>
-      </section>
-
-      <section className="grid gap-10 px-5 pb-8 sm:px-8 md:grid-cols-3 md:gap-6 md:px-6">
-        {prints.map((print) => (
-          <article key={print.action} className="bg-cream">
-            <Frame
-              src={print.image}
-              label={print.label}
-              ratio="aspect-[4/5]"
-              className="w-full rounded-md shadow-[0_12px_28px_rgba(1,27,61,0.08)]"
-            />
-            <p className="mt-5 font-display text-xl font-light leading-snug text-navy">{print.sentence}</p>
-            <Link href={print.href} className="mt-3 inline-block text-[12px] uppercase tracking-[0.2em] text-navy underline underline-offset-4">
-              {print.action}
+      <section className="grid gap-10 px-3 pb-8 sm:px-5 md:grid-cols-3 md:gap-6">
+        {three.map((item) => (
+          <article key={item.title} className="relative pt-12">
+            <WordSticker word={item.word} shift={item.shift} className="left-1/2 top-2 -translate-x-1/2" />
+            <Link href={item.href} className="group block">
+              <Frame src={item.image} label={item.label} ratio="aspect-[4/5]" className="w-full" />
+              <h2 className="mt-5 text-center font-display text-lg font-bold uppercase tracking-[0.08em] text-navy group-hover:underline">
+                {item.title}
+              </h2>
+              <p className="mt-1 text-center text-sm text-mist">{item.line}</p>
             </Link>
           </article>
         ))}
       </section>
+
+      <SentMoment
+        src={shot}
+        specs={specs}
+        copy='Apostellō is the Greek for “to send”. The house blend is pulled, then handed over like it matters. There is also the smash.'
+      />
 
       <section className="mx-auto max-w-6xl px-5 py-20 sm:px-8">
         {special ? (
@@ -158,13 +107,18 @@ export default function HomePage() {
         </Link>
       </section>
 
+      <section className="px-3 pb-6 sm:px-5">
+        <Collage items={collage} />
+        <Link href="/gallery" className="mt-5 inline-block text-[12px] uppercase tracking-[0.2em] text-navy underline underline-offset-4">
+          Gallery
+        </Link>
+      </section>
+
       <section className="bean-rule-t px-5 py-24 text-center sm:px-8">
         <p className="mx-auto max-w-2xl font-display text-3xl font-light leading-snug text-navy sm:text-4xl">
-          Come by {settings.location.split("|")[0].trim()}, or talk to{" "}
-          <Link href="/events" className="underline underline-offset-4">
-            {host}
-          </Link>{" "}
-          about an event.
+          <Link href="/visit#write" className="underline underline-offset-4">
+            Contact us
+          </Link>
         </p>
       </section>
     </SiteChrome>
